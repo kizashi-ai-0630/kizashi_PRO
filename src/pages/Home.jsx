@@ -81,6 +81,7 @@ function MarketClock() {
 
 function TradeImportCard() {
   const input = useRef(null);
+  const [acceptFilter, setAcceptFilter] = useState('.csv,.html,.htm,text/csv,text/html');
   const { rows, fileName, importTradeFile, clearRows } = useTradeData();
   const { notify } = useNotice();
   const ready = rows.length > 0;
@@ -93,6 +94,11 @@ function TradeImportCard() {
     notify(ok ? '取引履歴を読み込みました' : '取引履歴の読み込みに失敗しました', ok ? 'success' : 'error', 5000);
   };
 
+  const chooseFile = (filter) => {
+    setAcceptFilter(filter);
+    requestAnimationFrame(() => input.current?.click());
+  };
+
   return <section className="home-import-card glass-panel">
     <div className="home-import-icon">📂</div>
     <div className="home-import-copy">
@@ -102,8 +108,9 @@ function TradeImportCard() {
       <span>📷 スクリーンショットからの読込にも今後対応予定</span>
     </div>
     <div className="home-import-actions">
-      <input ref={input} type="file" accept=".csv,.html,.htm,text/csv,text/html" hidden onChange={load}/>
-      <button className="home-import-primary" onClick={() => input.current?.click()}>{ready ? 'ファイルを変更' : 'ファイルを選択'}</button>
+      <input ref={input} type="file" accept={acceptFilter} hidden onChange={load}/>
+      <button className="home-import-primary" onClick={() => chooseFile('.html,.htm,text/html')}>MT4 HTML</button>
+      <button className="home-import-primary" onClick={() => chooseFile('.csv,text/csv')}>MT5 CSV</button>
       {ready && <button className="home-import-clear" onClick={() => { if (confirm('読み込んだ取引履歴を解除しますか？')) { clearRows(); notify('取引履歴を解除しました', 'info'); } }}>履歴を解除</button>}
     </div>
   </section>;
@@ -138,7 +145,7 @@ export default function Home({ go }) {
     </div>
 
     <DailyBrief metrics={metrics} ready={ready}/>
-    {ready && <Kpis metrics={metrics}/>}
+    <Kpis metrics={metrics}/>
     <QuickActions go={go}/>
   </div>;
 }

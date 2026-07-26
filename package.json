@@ -1,7 +1,7 @@
 {
-  "name": "kizashi-9-14-1-sidebar-visibility-fix",
+  "name": "kizashi-9-15-mobile-import",
   "private": true,
-  "version": "9.14.1",
+  "version": "9.15.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",

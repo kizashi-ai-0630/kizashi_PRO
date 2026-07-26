@@ -162,3 +162,24 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
 .sidebar::-webkit-scrollbar{width:5px}.sidebar::-webkit-scrollbar-thumb{background:rgba(126,226,234,.42);border-radius:99px}
 .csv{margin-top:18px}.csv-card{padding:11px}.csv-card .filename{margin:6px 0}.csv-card small{font-size:11px}.history-file-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.history-file-actions button{margin-top:0!important;padding:9px 5px!important;font-size:12px}.history-guide-button{margin-top:8px!important}.supported-formats{margin-top:7px;padding:6px 7px}.sidebar footer{margin-top:12px;padding-bottom:4px}
 @media(max-height:850px) and (min-width:761px){.sidebar{padding-top:14px;padding-bottom:12px}.brand{padding:4px 0 10px}.logo{font-size:32px}.word{font-size:23px;margin-top:5px}.sidebar nav{gap:4px}.sidebar nav button{padding:9px 15px}.csv{padding-top:10px;margin-top:10px}.csv-card{margin-top:6px}.sidebar footer{display:none}}
+
+
+/* KIZASHI 9.15 — mobile-first trade import */
+.home-import-card{max-width:1380px;margin:0 auto 16px;border-radius:22px;padding:20px 22px;display:grid;grid-template-columns:58px 1fr auto;gap:17px;align-items:center}
+.home-import-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:linear-gradient(145deg,#e5fbfc,#dcefff);box-shadow:inset 0 0 0 1px rgba(21,166,184,.12)}
+.home-import-copy small{display:block;color:#078ca4;font-weight:900;letter-spacing:.16em;font-size:10px}
+.home-import-copy h2{margin:5px 0 6px;font-size:20px;color:#0a2944}
+.home-import-copy p{margin:0;color:#506b7d;font-size:13px;line-height:1.6}
+.home-import-copy span{display:block;margin-top:7px;color:#7b8f9a;font-size:11px;font-weight:700}
+.home-import-actions{display:flex;gap:8px;align-items:center}
+.home-import-actions button{border:0;border-radius:11px;padding:12px 17px;font-weight:900;cursor:pointer;white-space:nowrap}
+.home-import-primary{background:linear-gradient(110deg,#16b7c1,#0e92aa);color:#fff;box-shadow:0 9px 22px rgba(14,146,170,.2)}
+.home-import-clear{background:#fff0f1;color:#cf3446}
+@media(max-width:700px){
+  .home-import-card{margin:0 16px 16px;padding:18px;grid-template-columns:48px 1fr;gap:13px;border-radius:20px}
+  .home-import-icon{width:48px;height:48px;border-radius:15px;font-size:23px}
+  .home-import-copy h2{font-size:18px}
+  .home-import-copy p{font-size:12px}
+  .home-import-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr}
+  .home-import-actions button{width:100%;padding:13px}
+}

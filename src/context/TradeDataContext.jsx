@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { SAMPLE } from '../data/sample';
 import { buildDiagnosis, calculateMetrics } from '../utils/metrics';
 import { buildIntelligence } from '../utils/aiEngine';
 import { parseTradeFile } from '../utils/parser';
@@ -9,12 +8,32 @@ const TradeDataContext = createContext(null);
 
 export function TradeDataProvider({ children }) {
   const [rows, setRows] = useState(() => {
-    try { const saved = localStorage.getItem('kizashi_rows'); return saved ? JSON.parse(saved) : SAMPLE; } catch { return SAMPLE; }
+    try {
+      const savedType = localStorage.getItem('kizashi_file_type');
+      const savedName = localStorage.getItem('kizashi_file');
+      if (savedType === 'sample' || savedName === 'sample_trades.csv') return [];
+      const saved = localStorage.getItem('kizashi_rows');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
   });
-  const [fileName, setFileName] = useState(() => localStorage.getItem('kizashi_file') || 'sample_trades.csv');
-  const [dataStatus, setDataStatus] = useState('ready');
+  const [fileName, setFileName] = useState(() => {
+    const savedType = localStorage.getItem('kizashi_file_type');
+    const savedName = localStorage.getItem('kizashi_file');
+    return savedType === 'sample' || savedName === 'sample_trades.csv' ? '未選択' : (savedName || '未選択');
+  });
+  const [dataStatus, setDataStatus] = useState(() => {
+    const savedType = localStorage.getItem('kizashi_file_type');
+    const savedName = localStorage.getItem('kizashi_file');
+    return savedType === 'sample' || savedName === 'sample_trades.csv' ? 'empty' : 'ready';
+  });
   const [dataError, setDataError] = useState('');
-  const [fileType, setFileType] = useState(() => localStorage.getItem('kizashi_file_type') || 'sample');
+  const [fileType, setFileType] = useState(() => {
+    const savedType = localStorage.getItem('kizashi_file_type');
+    const savedName = localStorage.getItem('kizashi_file');
+    return savedType === 'sample' || savedName === 'sample_trades.csv' ? 'none' : (savedType || 'none');
+  });
 
   useEffect(() => {
     localStorage.setItem('kizashi_rows', JSON.stringify(rows));

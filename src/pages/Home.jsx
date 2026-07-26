@@ -3,7 +3,8 @@ import Kpis from '../components/Kpis';
 import { useTradeData } from '../context/TradeDataContext';
 import { useGuardian } from '../context/GuardianContext';
 import { yen } from '../utils/metrics';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNotice } from '../context/NoticeContext';
 
 const SESSIONS = [
   { name: '東京', start: 8, end: 16 },
@@ -77,6 +78,37 @@ function MarketClock() {
   </section>;
 }
 
+
+function TradeImportCard() {
+  const input = useRef(null);
+  const { rows, fileName, importTradeFile, clearRows } = useTradeData();
+  const { notify } = useNotice();
+  const ready = rows.length > 0;
+
+  const load = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    const ok = await importTradeFile(file);
+    notify(ok ? '取引履歴を読み込みました' : '取引履歴の読み込みに失敗しました', ok ? 'success' : 'error', 5000);
+  };
+
+  return <section className="home-import-card glass-panel">
+    <div className="home-import-icon">📂</div>
+    <div className="home-import-copy">
+      <small>TRADE DATA</small>
+      <h2>{ready ? '取引履歴を変更する' : 'トレード履歴を読み込む'}</h2>
+      <p>{ready ? `${fileName}・${rows.length}件を読み込み済みです。` : 'MT4（HTML）・MT5（CSV）の履歴を選ぶと、スコア・分析・AIコーチに反映されます。'}</p>
+      <span>📷 スクリーンショットからの読込にも今後対応予定</span>
+    </div>
+    <div className="home-import-actions">
+      <input ref={input} type="file" accept=".csv,.html,.htm,text/csv,text/html" hidden onChange={load}/>
+      <button className="home-import-primary" onClick={() => input.current?.click()}>{ready ? 'ファイルを変更' : 'ファイルを選択'}</button>
+      {ready && <button className="home-import-clear" onClick={() => { if (confirm('読み込んだ取引履歴を解除しますか？')) { clearRows(); notify('取引履歴を解除しました', 'info'); } }}>履歴を解除</button>}
+    </div>
+  </section>;
+}
+
 function QuickActions({ go }) {
   const actions = [
     ['🧠', '今日の作戦', 'brain'],
@@ -98,13 +130,15 @@ export default function Home({ go }) {
       <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong></div>
     </section>
 
+    <TradeImportCard/>
+
     <div className="daily-main-grid">
       <GuardianFocus go={go}/>
       <MarketClock/>
     </div>
 
     <DailyBrief metrics={metrics} ready={ready}/>
-    <Kpis metrics={metrics}/>
+    {ready && <Kpis metrics={metrics}/>}
     <QuickActions go={go}/>
   </div>;
 }

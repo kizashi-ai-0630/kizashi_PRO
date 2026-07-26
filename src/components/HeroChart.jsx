@@ -1,0 +1,4 @@
+export default function HeroChart() {
+  const points = Array.from({ length: 72 }, (_, i) => [310 + i * 14.3, 245 - Math.sin(i / 5) * 38 - i * 1.45 + Math.sin(i / 2.2) * 19]);
+  return <svg className="hero-chart" viewBox="0 0 1380 420" preserveAspectRatio="none"><defs><linearGradient id="fade"><stop offset="0" stopColor="#fff" stopOpacity="0"/><stop offset=".28" stopColor="#fff" stopOpacity="1"/></linearGradient><mask id="m"><rect width="100%" height="100%" fill="url(#fade)"/></mask></defs><g mask="url(#m)">{points.map(([x,y],i) => { const up = i % 4 !== 0; return <g key={i} opacity=".46"><line x1={x} y1={y-22} x2={x} y2={y+31} stroke={up?'#bffcff':'#fff'} strokeWidth="1"/><rect x={x-3.1} y={up?y-9:y-2} width="6.2" height={up?19:22} rx="1" fill={up?'#76efff':'rgba(255,255,255,.2)'} stroke="#e9ffff" strokeWidth="1"/></g>; })}</g><polyline points={points.map(([x,y]) => `${x},${y}`).join(' ')} fill="none" stroke="#55dbe8" strokeOpacity=".32" strokeWidth="2"/></svg>;
+}

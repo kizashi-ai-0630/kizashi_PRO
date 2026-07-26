@@ -1,0 +1,3 @@
+import { useState } from 'react';
+import Page from '../components/Page';
+export default function Records(){const[saved,setSaved]=useState(false);return <Page title="トレード記録" sub="ジャーナル・チャートメモ・取引履歴"><div className="form-card"><div className="form-grid"><label>日付<input type="date" defaultValue={new Date().toISOString().slice(0,10)}/></label><label>心理状態<select><option>冷静</option><option>普通</option><option>焦り</option></select></label><label>自信<input type="range" min="1" max="5" defaultValue="3"/></label><label>エントリー根拠<textarea/></label><label>振り返り<textarea/></label><label className="check"><input type="checkbox"/>ルールを守れた</label></div><button onClick={()=>setSaved(true)}>日記を保存</button>{saved&&<p className="saved">✓ 保存しました</p>}</div></Page>}

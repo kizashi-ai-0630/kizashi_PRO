@@ -21,7 +21,7 @@ function sessionState(session, hour) {
   return { label: until <= 3 ? 'SOON' : 'CLOSED', tone: until <= 3 ? 'soon' : 'closed' };
 }
 
-function DailyBrief({ metrics, ready }) {
+function DailyBrief({ metrics, ready, score }) {
   let title = 'まずは取引データを読み込みましょう。';
   let body = 'CSVを読み込むと、直近の成績から今日意識したいポイントを短く表示します。';
   if (ready) {
@@ -40,7 +40,7 @@ function DailyBrief({ metrics, ready }) {
     }
   }
   return <section className="daily-brief glass-panel">
-    <div className="section-kicker">🤖 AI DAILY BRIEF</div>
+    <div className="daily-brief-head"><div className="section-kicker">🤖 AI DAILY BRIEF</div><div className="daily-rating"><small>今日の評価</small><strong>{score}</strong><span>/100</span></div></div>
     <div className="daily-brief-copy"><div><h3>Today's Insight</h3><h2>{title}</h2><p>{body}</p><hr/><h3>Today's Message</h3><p>「エントリーしない判断も、立派なトレードです。」</p></div></div>
   </section>;
 }
@@ -54,6 +54,7 @@ function GuardianFocus({ go }) {
       <div className="guardian-identity"><span className="guardian-emblem">🛡️</span><div><small>GUARDIAN</small><h2>{enabled ? '登録済み条件を監視中' : '監視停止中'}</h2></div></div>
       <div className="guardian-live"><i/><span>{enabled ? 'ACTIVE' : 'OFFLINE'}</span></div>
     </div>
+    <div className="guardian-mobile-summary"><span><small>監視中</small><b>{activeRules}条件</b></span><span><small>最新検知</small><b>{latest?.time || '履歴なし'}</b></span></div>
     <div className="guardian-focus-grid">
       <div><small>監視対象</small><strong>{symbols.length}</strong><p>{symbols.join(' · ') || '未登録'}</p></div>
       <div><small>有効条件</small><strong>{activeRules}</strong><p>登録済み条件を確認中</p></div>
@@ -131,14 +132,14 @@ function TradeImportCard({ go }) {
       <small>TRADE DATA</small>
       <h2>{ready ? '取引履歴を変更する' : 'トレード履歴を読み込む'}</h2>
       <p>{ready ? `${fileName}・${rows.length}件を読み込み済みです。` : 'MT4（HTML）・MT5（CSV）の履歴を選ぶと、スコア・分析・AIコーチに反映されます。'}</p>
-      <span>📷 スクリーンショットはAIコーチがチャートとして解析します</span>
+      <span>📷 チャート・取引履歴・結果画面のスクショをAIが解析します</span>
     </div>
     <div className="home-import-actions">
       <input ref={input} type="file" accept={acceptFilter} hidden onChange={load}/>
       <input ref={imageInput} type="file" accept="image/*" hidden onChange={chooseScreenshot}/>
       <button className="home-import-primary" onClick={() => chooseFile('.html,.htm,text/html')}>MT4 HTML</button>
       <button className="home-import-primary" onClick={() => chooseFile('.csv,text/csv')}>MT5 CSV</button>
-      <button className="home-import-image" onClick={() => imageInput.current?.click()}>📷 スクショ解析</button>
+      <button className="home-import-image" onClick={() => imageInput.current?.click()}>📷 スクショをAI解析</button>
       {ready && <button className="home-import-clear" onClick={() => { if (confirm('読み込んだ取引履歴を解除しますか？')) { clearRows(); notify('取引履歴を解除しました', 'info'); } }}>履歴を解除</button>}
     </div>
   </section>;
@@ -172,7 +173,7 @@ export default function Home({ go }) {
       <MarketClock/>
     </div>
 
-    {ready && <DailyBrief metrics={metrics} ready={ready}/>}
+    {ready && <DailyBrief metrics={metrics} ready={ready} score={intelligence.score}/>}
     {ready && <Kpis metrics={metrics}/>}
     <QuickActions go={go}/>
   </div>;

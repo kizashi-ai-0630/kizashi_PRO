@@ -211,3 +211,35 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   .guardian-focus-grid{grid-template-columns:1fr!important}
   .guardian-focus-grid .latest-detection{grid-column:auto!important}
 }
+\n\n/* KIZASHI 9.17 — mobile readability and compact home */
+.daily-brief-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.daily-rating{display:flex;align-items:baseline;gap:3px;padding:8px 12px;border-radius:14px;background:linear-gradient(135deg,#e7fbfc,#eaf3ff);border:1px solid rgba(75,188,204,.2);white-space:nowrap}
+.daily-rating small{margin-right:5px;color:#527282;font-weight:800}
+.daily-rating strong{font-family:Georgia,serif;font-size:24px;line-height:1;color:#087e98}
+.daily-rating span{font-size:11px;color:#718893;font-weight:800}
+.guardian-mobile-summary{display:none}
+.kpi-value{white-space:nowrap;overflow:hidden;text-overflow:clip;font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+@media(max-width:760px){
+  .daily-brief-head{align-items:flex-start}
+  .daily-rating{padding:7px 10px}
+  .daily-rating small{display:none}
+  .daily-rating strong{font-size:21px}
+  .guardian-focus{padding:16px!important}
+  .guardian-focus-grid{display:none!important}
+  .guardian-mobile-summary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0 12px}
+  .guardian-mobile-summary span{min-width:0;padding:11px 12px;border-radius:13px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.1)}
+  .guardian-mobile-summary small,.guardian-mobile-summary b{display:block}
+  .guardian-mobile-summary small{font-size:10px;color:#9fd9df;font-weight:800}
+  .guardian-mobile-summary b{margin-top:5px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .guardian-identity h2{font-size:16px}
+  .guardian-live span{display:none}
+  .daily-home .kpi{min-height:132px!important;padding:14px 12px!important;gap:8px!important}
+  .daily-home .kpi .bubble{width:42px;height:42px;font-size:20px}
+  .daily-home .kpi small{font-size:12px}
+  .daily-home .kpi strong,.daily-home .kpi .kpi-value{font-size:clamp(19px,5.2vw,27px)!important;line-height:1.08!important;overflow:visible!important;overflow-wrap:normal!important;word-break:keep-all!important}
+  .daily-home .kpi em{font-size:10px}
+}
+@media(max-width:390px){
+  .daily-home .kpi strong,.daily-home .kpi .kpi-value{font-size:clamp(17px,4.8vw,23px)!important}
+  .daily-home .kpi .bubble{width:36px;height:36px;font-size:18px}
+}

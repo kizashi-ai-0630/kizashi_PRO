@@ -6,6 +6,7 @@ import AppLoader from './components/AppLoader';
 import { CsvEmptyState, CsvErrorState, LoadingSkeleton } from './components/ReleaseStates';
 import { useTradeData } from './context/TradeDataContext';
 import BetaWelcome from './components/BetaWelcome';
+import ShareFeedback from './components/ShareFeedback';
 
 const Home = lazy(() => import('./pages/Home'));
 const Brain = lazy(() => import('./pages/Brain'));
@@ -26,7 +27,7 @@ export default function App(){
   useEffect(()=>{window.scrollTo({top:0,left:0,behavior:'auto'})},[page]);
   const go=(next)=>{const target=VALID_PAGES.has(next)?next:'home';location.hash=target;setPage(target);scrollTo({top:0,behavior:'smooth'})};
   const PageComponent={home:Home,brain:Brain,analysis:Analysis,coach:Coach,records:Records,growth:Growth,guardian:Guardian,settings:Settings}[page] || Home;
-  const requiresData = new Set(['home','brain','analysis','coach','records','growth']).has(page);
+  const requiresData = new Set(['brain','analysis','coach','records','growth']).has(page);
   const content = requiresData && dataStatus === 'loading' ? <LoadingSkeleton/> : requiresData && dataStatus === 'error' ? <CsvErrorState message={dataError}/> : requiresData && !rows.length ? <CsvEmptyState/> : <Suspense fallback={<AppLoader/>}><PageComponent go={go}/></Suspense>;
-  return <><BetaWelcome go={go}/><div className="app-shell"><Sidebar page={page} go={go}/><main className="main"><Topbar go={go}/>{content}</main><MobileNav page={page} go={go}/></div></>;
+  return <><BetaWelcome go={go}/><div className="app-shell"><Sidebar page={page} go={go}/><main className="main"><Topbar go={go}/>{content}</main><MobileNav page={page} go={go}/><ShareFeedback/></div></>;
 }

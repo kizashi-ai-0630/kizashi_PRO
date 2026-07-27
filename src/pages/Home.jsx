@@ -79,8 +79,9 @@ function MarketClock() {
 }
 
 
-function TradeImportCard() {
+function TradeImportCard({ go }) {
   const input = useRef(null);
+  const imageInput = useRef(null);
   const [acceptFilter, setAcceptFilter] = useState('.csv,.html,.htm,text/csv,text/html');
   const { rows, fileName, importTradeFile, clearRows } = useTradeData();
   const { notify } = useNotice();
@@ -99,18 +100,45 @@ function TradeImportCard() {
     requestAnimationFrame(() => input.current?.click());
   };
 
+  const chooseScreenshot = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      notify('画像ファイルを選んでください', 'error');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      notify('画像は8MB以下にしてください', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        sessionStorage.setItem('kizashi_pending_vision', JSON.stringify({ name: file.name, dataUrl: String(reader.result), size: file.size }));
+        go('coach');
+      } catch {
+        notify('画像を準備できませんでした', 'error');
+      }
+    };
+    reader.onerror = () => notify('画像を読み込めませんでした', 'error');
+    reader.readAsDataURL(file);
+  };
+
   return <section className="home-import-card glass-panel">
     <div className="home-import-icon">📂</div>
     <div className="home-import-copy">
       <small>TRADE DATA</small>
       <h2>{ready ? '取引履歴を変更する' : 'トレード履歴を読み込む'}</h2>
       <p>{ready ? `${fileName}・${rows.length}件を読み込み済みです。` : 'MT4（HTML）・MT5（CSV）の履歴を選ぶと、スコア・分析・AIコーチに反映されます。'}</p>
-      <span>📷 スクリーンショットからの読込にも今後対応予定</span>
+      <span>📷 スクリーンショットはAIコーチがチャートとして解析します</span>
     </div>
     <div className="home-import-actions">
       <input ref={input} type="file" accept={acceptFilter} hidden onChange={load}/>
+      <input ref={imageInput} type="file" accept="image/*" hidden onChange={chooseScreenshot}/>
       <button className="home-import-primary" onClick={() => chooseFile('.html,.htm,text/html')}>MT4 HTML</button>
       <button className="home-import-primary" onClick={() => chooseFile('.csv,text/csv')}>MT5 CSV</button>
+      <button className="home-import-image" onClick={() => imageInput.current?.click()}>📷 スクショ解析</button>
       {ready && <button className="home-import-clear" onClick={() => { if (confirm('読み込んだ取引履歴を解除しますか？')) { clearRows(); notify('取引履歴を解除しました', 'info'); } }}>履歴を解除</button>}
     </div>
   </section>;
@@ -137,15 +165,15 @@ export default function Home({ go }) {
       <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong></div>
     </section>
 
-    <TradeImportCard/>
+    <TradeImportCard go={go}/>
 
     <div className="daily-main-grid">
       <GuardianFocus go={go}/>
       <MarketClock/>
     </div>
 
-    <DailyBrief metrics={metrics} ready={ready}/>
-    <Kpis metrics={metrics}/>
+    {ready && <DailyBrief metrics={metrics} ready={ready}/>}
+    {ready && <Kpis metrics={metrics}/>}
     <QuickActions go={go}/>
   </div>;
 }

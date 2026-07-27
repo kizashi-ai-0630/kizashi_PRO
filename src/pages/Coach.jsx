@@ -50,7 +50,14 @@ export default function Coach() {
   const [memories, setMemories] = useState(() => loadJson(MEMORY_KEY, []));
   const [visionCache, setVisionCache] = useState(() => loadJson(VISION_KEY, null));
   const [question, setQuestion] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(() => {
+    try {
+      const pending = sessionStorage.getItem('kizashi_pending_vision');
+      if (!pending) return null;
+      sessionStorage.removeItem('kizashi_pending_vision');
+      return JSON.parse(pending);
+    } catch { return null; }
+  });
   const [loading, setLoading] = useState(false);
   const [connection, setConnection] = useState({ checked: false, connected: false, model: '' });
   const [imageError, setImageError] = useState('');
@@ -64,6 +71,7 @@ export default function Coach() {
   }), []);
 
   useEffect(() => { if (!messages.length) setMessages([welcome]); }, [messages.length, welcome]);
+  useEffect(() => { if (image) { setQuestion('このスクリーンショットを分析して'); setActiveRoute('vision'); } }, []);
   useEffect(() => { localStorage.setItem(CHAT_KEY, JSON.stringify(messages.slice(-50))); messageEnd.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
   useEffect(() => { localStorage.setItem(MEMORY_KEY, JSON.stringify(memories.slice(-30))); }, [memories]);
   useEffect(() => { visionCache ? localStorage.setItem(VISION_KEY, JSON.stringify(visionCache)) : localStorage.removeItem(VISION_KEY); }, [visionCache]);

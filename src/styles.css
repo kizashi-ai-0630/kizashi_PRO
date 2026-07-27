@@ -183,3 +183,31 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   .home-import-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr}
   .home-import-actions button{width:100%;padding:13px}
 }
+
+
+/* KIZASHI 9.16 mobile home unification */
+.home-import-image{background:linear-gradient(110deg,#eef8ff,#e9f5ff)!important;color:#0b6b91!important;border:1px solid rgba(35,143,180,.2)!important}
+.home-import-image:hover{background:#e0f3ff!important}
+@media(max-width:760px){
+  .daily-home{display:flex;flex-direction:column;gap:14px}
+  .daily-home .daily-hero,.daily-home .home-import-card,.daily-home .daily-main-grid,.daily-home .daily-brief,.daily-home .kpi-grid,.daily-home .quick-actions{margin-bottom:0}
+  .home-import-card{margin:0!important;grid-template-columns:46px minmax(0,1fr);padding:16px!important;gap:12px!important}
+  .home-import-actions{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .home-import-actions .home-import-image,.home-import-actions .home-import-clear{grid-column:1/-1}
+  .guardian-focus{padding:18px!important}
+  .guardian-focus-grid{grid-template-columns:1fr 1fr!important;margin:16px 0 12px!important}
+  .guardian-focus-grid>div{padding:12px!important}
+  .guardian-focus-grid .latest-detection{grid-column:1/-1!important}
+  .guardian-focus-grid strong{font-size:22px!important}
+  .guardian-focus-grid .latest-detection strong{font-size:14px!important}
+  .market-clock{padding:18px!important}
+  .daily-home .kpi-grid{gap:10px!important}
+  .daily-home .kpi{min-height:150px;padding:16px!important}
+  .daily-home .kpi strong{font-size:clamp(28px,8vw,42px)!important;overflow-wrap:anywhere}
+}
+@media(max-width:420px){
+  .home-import-actions{grid-template-columns:1fr!important}
+  .home-import-actions .home-import-image,.home-import-actions .home-import-clear{grid-column:auto}
+  .guardian-focus-grid{grid-template-columns:1fr!important}
+  .guardian-focus-grid .latest-detection{grid-column:auto!important}
+}

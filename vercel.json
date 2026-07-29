@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "api/coach.js": { "maxDuration": 60, "memory": 1024 },
+    "api/key-test.js": { "maxDuration": 30 }
+  }
+}

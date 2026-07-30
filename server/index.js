@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import OpenAI from 'openai';
+import { adminAuthConfigured, adminCookie, clearAdminCookie, createAdminToken, isAdminRequest, verifyAdminPassword } from '../api/_admin-auth.js';
 
 const app = express();
 const port = Number(process.env.PORT || 8787);
@@ -20,6 +21,23 @@ function clientFromRequest(req) {
 
 app.use(cors());
 app.use(express.json({ limit: '14mb' }));
+
+
+app.get('/api/admin-session', (req, res) => {
+  res.json({ configured: adminAuthConfigured(), authenticated: isAdminRequest(req) });
+});
+
+app.post('/api/admin-login', (req, res) => {
+  if (!adminAuthConfigured()) return res.status(503).json({ error: 'ADMIN_AUTH_NOT_CONFIGURED', message: '管理者認証が未設定です。' });
+  if (!verifyAdminPassword(req.body?.password)) return res.status(401).json({ error: 'INVALID_ADMIN_PASSWORD', message: '管理者パスワードが違います。' });
+  res.setHeader('Set-Cookie', adminCookie(createAdminToken(), false));
+  return res.json({ ok: true, authenticated: true });
+});
+
+app.post('/api/admin-logout', (req, res) => {
+  res.setHeader('Set-Cookie', clearAdminCookie(false));
+  return res.json({ ok: true, authenticated: false });
+});
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const safeNumber = (value) => Number.isFinite(Number(value)) ? Number(value) : 0;

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTradeData } from '../context/TradeDataContext';
 import { useNotice } from '../context/NoticeContext';
 import { yen } from '../utils/metrics';
+import { trackEvent } from '../utils/analytics';
 
 const SITE_URL = 'https://kizashi-pro.vercel.app/';
 const REPO_ISSUES_URL = 'https://github.com/kizashi-ai-0630/kizashi_PRO/issues/new';
@@ -72,14 +73,16 @@ export default function ShareFeedback() {
   const score = ready ? intelligence.score : '—';
   const shareText = useMemo(() => buildShareText(metrics, score, ready), [metrics, score, ready]);
 
-  const openX = () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener,noreferrer');
+  const openX = () => { trackEvent('share_open', { channel: 'x' }); return window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener,noreferrer'); };
   const nativeShare = async () => {
+    trackEvent('share_open', { channel: 'native' });
     try {
       if (navigator.share) await navigator.share({ title: 'KIZASHI', text: shareText, url: SITE_URL });
       else { await navigator.clipboard.writeText(shareText); notify('投稿文をコピーしました', 'success'); }
     } catch (error) { if (error?.name !== 'AbortError') notify('共有を開始できませんでした', 'error'); }
   };
   const shareImage = async () => {
+    trackEvent('share_open', { channel: 'image' });
     if (!ready) { notify('成績画像は取引履歴を読み込むと作成できます', 'info'); return; }
     const canvas = drawShareCard(metrics, score);
     canvas.toBlob(async (blob) => {
@@ -98,6 +101,7 @@ export default function ShareFeedback() {
   };
   const sendFeedback = () => {
     if (message.trim().length < 5) { notify('内容を5文字以上入力してください', 'error'); return; }
+    trackEvent('feedback_send', { category });
     const title = `[${category}] KIZASHI β フィードバック`;
     const body = `${message.trim()}\n\n---\n画面: ${location.hash || '#home'}\n端末: ${navigator.userAgent}\n日時: ${new Date().toLocaleString('ja-JP')}`;
     const url = `${REPO_ISSUES_URL}?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;

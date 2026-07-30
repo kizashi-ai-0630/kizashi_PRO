@@ -4,6 +4,7 @@ import { useTradeData } from '../context/TradeDataContext';
 import { answerWithIntelligence } from '../utils/aiEngine';
 import { yen } from '../utils/metrics';
 import { useApiKey } from '../context/ApiKeyContext';
+import { trackEvent } from '../utils/analytics';
 
 const CHAT_KEY = 'kizashi_ai_chat_v920';
 const MEMORY_KEY = 'kizashi_ai_memory_v920';
@@ -99,6 +100,7 @@ export default function Coach() {
 
     const route = detectRoute(text, Boolean(image), Boolean(visionCache));
     setActiveRoute(route);
+    trackEvent(route === 'vision' ? 'vision_analysis' : 'ai_chat', { route, has_image: Boolean(image), trade_count: rows.length });
     const previous = messages.filter((m) => !m.fallback).slice(route === 'chat' ? -8 : -10);
     const detected = inferMemory(text);
     const nextMemories = detected && !memories.some((m) => m.text === detected.text) ? [...memories, detected].slice(-30) : memories;

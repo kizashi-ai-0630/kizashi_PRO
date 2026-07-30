@@ -3,6 +3,7 @@ import { buildDiagnosis, calculateMetrics } from '../utils/metrics';
 import { buildIntelligence } from '../utils/aiEngine';
 import { parseTradeFile } from '../utils/parser';
 import { readTradeFile } from '../utils/fileReader';
+import { trackEvent } from '../utils/analytics';
 
 const TradeDataContext = createContext(null);
 
@@ -57,9 +58,12 @@ export function TradeDataProvider({ children }) {
       setFileName(file.name);
       setFileType(type === 'html' ? 'mt4-html' : 'csv');
       setDataStatus('ready');
+      trackEvent('trade_file_upload', { file_type: type, trade_count: data.length });
+      trackEvent('analysis_complete', { file_type: type, trade_count: data.length });
       return true;
     } catch (error) {
       setDataStatus('error');
+      trackEvent('trade_file_error', { message: error?.message || 'unknown' });
       setDataError(error?.message || '取引履歴の読み込みに失敗しました。');
       return false;
     }

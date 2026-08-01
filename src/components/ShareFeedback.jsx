@@ -5,7 +5,6 @@ import { yen } from '../utils/metrics';
 import { trackEvent } from '../utils/analytics';
 
 const SITE_URL = 'https://kizashi-pro.vercel.app/';
-const REPO_ISSUES_URL = 'https://github.com/kizashi-ai-0630/kizashi_PRO/issues/new';
 
 function buildShareText(metrics, score, ready) {
   if (!ready) return `FXトレード分析アプリ「KIZASHI」β版を公開中🌊\n迷いを、確信へ。\n${SITE_URL}\n#KIZASHI #FX`;
@@ -69,6 +68,7 @@ export default function ShareFeedback() {
   const [shareOpen, setShareOpen] = useState(false);
   const [category, setCategory] = useState('改善提案');
   const [message, setMessage] = useState('');
+  const [feedbackSending, setFeedbackSending] = useState(false);
   const ready = rows.length > 0;
   const score = ready ? intelligence.score : '—';
   const shareText = useMemo(() => buildShareText(metrics, score, ready), [metrics, score, ready]);
@@ -99,15 +99,38 @@ export default function ShareFeedback() {
       } catch (error) { if (error?.name !== 'AbortError') notify('画像を共有できませんでした', 'error'); }
     }, 'image/png');
   };
-  const sendFeedback = () => {
-    if (message.trim().length < 5) { notify('内容を5文字以上入力してください', 'error'); return; }
-    trackEvent('feedback_send', { category });
-    const title = `[${category}] KIZASHI β フィードバック`;
-    const body = `${message.trim()}\n\n---\n画面: ${location.hash || '#home'}\n端末: ${navigator.userAgent}\n日時: ${new Date().toLocaleString('ja-JP')}`;
-    const url = `${REPO_ISSUES_URL}?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
-    setMessage(''); setFeedbackOpen(false);
-    notify('GitHubの送信画面を開きました', 'success');
+  const sendFeedback = async () => {
+    const trimmed = message.trim();
+    if (trimmed.length < 5) { notify('内容を5文字以上入力してください', 'error'); return; }
+    if (feedbackSending) return;
+
+    setFeedbackSending(true);
+    try {
+      const visitorId = localStorage.getItem('kizashi_analytics_visitor_v1') || 'anonymous';
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category,
+          message: trimmed,
+          page: location.hash || '#home',
+          userAgent: navigator.userAgent,
+          appVersion: 'KIZASHI 10.5 Discord Feedback',
+          visitorId,
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || 'フィードバックを送信できませんでした。');
+
+      trackEvent('feedback_send', { category, delivered: true });
+      setMessage('');
+      setFeedbackOpen(false);
+      notify('Discordへフィードバックを送信しました', 'success');
+    } catch (error) {
+      notify(error?.message || 'フィードバックを送信できませんでした', 'error');
+    } finally {
+      setFeedbackSending(false);
+    }
   };
 
   return <>
@@ -135,9 +158,9 @@ export default function ShareFeedback() {
         <small>FEEDBACK</small><h2>ご意見・不具合を送る</h2><p>使いにくいところや欲しい機能を教えてください。</p>
         <label>種類<select value={category} onChange={e => setCategory(e.target.value)}><option>不具合</option><option>改善提案</option><option>欲しい機能</option><option>その他</option></select></label>
         <label>内容<textarea rows="6" value={message} onChange={e => setMessage(e.target.value)} placeholder="気になった画面や操作をできるだけ詳しく書いてください"/></label>
-        <p className="utility-note">送信時にGitHubの投稿画面が開きます。アカウントがない場合は内容をコピーして送れます。</p>
+        <p className="utility-note">送信内容はKIZASHI運営のDiscordフィードバックチャンネルへ届きます。APIキーや取引データは送信されません。</p>
         <div className="utility-actions">
-          <button className="primary" onClick={sendFeedback}>送信画面を開く</button>
+          <button className="primary" onClick={sendFeedback} disabled={feedbackSending}>{feedbackSending ? '送信中…' : 'Discordへ送信'}</button>
           <button onClick={async () => { await navigator.clipboard.writeText(`[${category}] ${message}`); notify('フィードバックをコピーしました', 'success'); }}>内容をコピー</button>
         </div>
       </section>

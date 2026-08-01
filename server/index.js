@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import OpenAI from 'openai';
 import { adminAuthConfigured, adminCookie, clearAdminCookie, createAdminToken, isAdminRequest, verifyAdminPassword } from '../api/_admin-auth.js';
+import { feedbackWebhookConfigured, sendFeedbackToDiscord } from '../api/_feedback.js';
 
 const app = express();
 const port = Number(process.env.PORT || 8787);
@@ -37,6 +38,23 @@ app.post('/api/admin-login', (req, res) => {
 app.post('/api/admin-logout', (req, res) => {
   res.setHeader('Set-Cookie', clearAdminCookie(false));
   return res.json({ ok: true, authenticated: false });
+});
+
+app.get('/api/feedback', (req, res) => {
+  res.json({ ok: true, configured: feedbackWebhookConfigured() });
+});
+
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const result = await sendFeedbackToDiscord(req.body || {});
+    return res.json(result);
+  } catch (error) {
+    console.error('feedback', { code: error?.code, status: error?.status, message: error?.message });
+    return res.status(Number(error?.status || 500)).json({
+      error: error?.code || 'FEEDBACK_SEND_FAILED',
+      message: error?.message || 'フィードバックを送信できませんでした。',
+    });
+  }
 });
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

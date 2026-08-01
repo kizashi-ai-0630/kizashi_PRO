@@ -1,5 +1,6 @@
 const STORE_KEY = 'kizashi_analytics_events_v1';
-const MAX_LOCAL_EVENTS = 1000;
+const MAX_LOCAL_EVENTS = 5000;
+const VISITOR_KEY = 'kizashi_analytics_visitor_v1';
 let initialized = false;
 
 function env(name) { return String(import.meta.env?.[name] || '').trim(); }
@@ -9,6 +10,16 @@ function safeProps(props = {}) {
 function addScript(src, id) {
   if (document.getElementById(id)) return;
   const script = document.createElement('script'); script.id = id; script.async = true; script.src = src; document.head.appendChild(script);
+}
+function visitorId() {
+  try {
+    let id = localStorage.getItem(VISITOR_KEY);
+    if (!id) {
+      id = globalThis.crypto?.randomUUID?.() || `visitor_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(VISITOR_KEY, id);
+    }
+    return id;
+  } catch { return 'anonymous'; }
 }
 function storeEvent(name, props) {
   try {
@@ -53,6 +64,14 @@ export function initAnalytics() {
 export function trackEvent(name, props = {}) {
   const clean = safeProps(props);
   storeEvent(name, clean);
+  if (typeof window !== 'undefined' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+    fetch('/api/analytics-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({ name, props: clean, visitorId: visitorId() }),
+    }).catch(() => {});
+  }
   if (typeof window === 'undefined') return;
   window.gtag?.('event', name, clean);
   window.posthog?.capture?.(name, clean);

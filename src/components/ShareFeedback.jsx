@@ -115,7 +115,7 @@ export default function ShareFeedback() {
           message: trimmed,
           page: location.hash || '#home',
           userAgent: navigator.userAgent,
-          appVersion: 'KIZASHI 10.5 Discord Feedback',
+          appVersion: 'KIZASHI 10.5.1 Discord Feedback',
           visitorId,
         }),
       });

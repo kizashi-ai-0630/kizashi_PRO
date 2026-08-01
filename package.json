@@ -1,7 +1,7 @@
 {
-  "name": "kizashi-10-3-growth-persistence",
+  "name": "kizashi-10-5-1-discord-feedback-final",
   "private": true,
-  "version": "10.3.0",
+  "version": "10.5.1",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",

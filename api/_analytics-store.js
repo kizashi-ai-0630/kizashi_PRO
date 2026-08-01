@@ -1,9 +1,30 @@
 const PREFIX = 'kizashi:analytics';
 
+function firstEnv(...names) {
+  for (const name of names) {
+    const value = String(process.env[name] || '').trim();
+    if (value) return { name, value };
+  }
+  return { name: '', value: '' };
+}
+
 function redisConfig() {
-  const url = String(process.env.UPSTASH_REDIS_REST_URL || '').trim().replace(/\/$/, '');
-  const token = String(process.env.UPSTASH_REDIS_REST_TOKEN || '').trim();
-  return { url, token, configured: Boolean(url && token) };
+  // Upstash integration can expose either the native names or Vercel KV names.
+  const urlEnv = firstEnv('UPSTASH_REDIS_REST_URL', 'KV_REST_API_URL', 'KV_URL');
+  const tokenEnv = firstEnv('UPSTASH_REDIS_REST_TOKEN', 'KV_REST_API_TOKEN', 'KV_REST_API_READ_ONLY_TOKEN');
+  const url = urlEnv.value.replace(/\/$/, '');
+  const token = tokenEnv.value;
+  return {
+    url,
+    token,
+    configured: Boolean(url && token),
+    source: urlEnv.name && tokenEnv.name ? `${urlEnv.name} / ${tokenEnv.name}` : '',
+  };
+}
+
+export function analyticsStoreStatus() {
+  const config = redisConfig();
+  return { configured: config.configured, source: config.source };
 }
 
 export function analyticsStoreConfigured() {
@@ -18,7 +39,10 @@ export async function redisPipeline(commands) {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(commands),
   });
-  if (!response.ok) throw new Error(`REDIS_HTTP_${response.status}`);
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(`REDIS_HTTP_${response.status}:${detail.slice(0, 120)}`);
+  }
   const payload = await response.json();
   return Array.isArray(payload) ? payload.map((item) => item?.result) : [];
 }

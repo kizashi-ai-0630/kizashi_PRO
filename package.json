@@ -1,7 +1,7 @@
 {
-  "name": "kizashi-10-2-growth-dashboard",
+  "name": "kizashi-10-3-growth-persistence",
   "private": true,
-  "version": "10.2.0",
+  "version": "10.3.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",

@@ -66,6 +66,14 @@ export default function Coach() {
   const messageEnd = useRef(null);
   const fileInput = useRef(null);
 
+  useEffect(() => {
+    const pendingPrompt = sessionStorage.getItem('kizashi_pending_prompt');
+    if (!pendingPrompt) return;
+    sessionStorage.removeItem('kizashi_pending_prompt');
+    setQuestion(pendingPrompt);
+    setActiveRoute('chat');
+  }, []);
+
   const welcome = useMemo(() => ({
     role: 'ai',
     text: `みずぴ、おかえり😊 KIZASHIのぴーだよ。\n質問に合わせて必要なデータだけ使うSmart Routerで、速く安定して答えるね。`

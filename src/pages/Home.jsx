@@ -147,6 +147,7 @@ function TradeImportCard({ go }) {
 
 function QuickActions({ go }) {
   const actions = [
+    ['📈', 'Liveチャート', 'live'],
     ['🧠', '今日の作戦', 'brain'],
     ['📊', '分析を見る', 'analysis'],
     ['🤖', 'AIに相談', 'coach'],

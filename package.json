@@ -1,7 +1,7 @@
 {
-  "name": "kizashi-10-5-1-discord-feedback-final",
+  "name": "kizashi-11-live-mode",
   "private": true,
-  "version": "10.5.1",
+  "version": "11.0.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",

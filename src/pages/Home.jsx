@@ -3,7 +3,7 @@ import Kpis from '../components/Kpis';
 import { useTradeData } from '../context/TradeDataContext';
 import { useGuardian } from '../context/GuardianContext';
 import { yen } from '../utils/metrics';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNotice } from '../context/NoticeContext';
 
 const SESSIONS = [
@@ -79,6 +79,67 @@ function MarketClock() {
   </section>;
 }
 
+
+
+const HOME_MARKETS = [
+  { symbol: 'OANDA:XAUUSD', label: 'XAU/USD' },
+  { symbol: 'FX:USDJPY', label: 'USD/JPY' },
+  { symbol: 'FX:EURUSD', label: 'EUR/USD' },
+  { symbol: 'FX:GBPJPY', label: 'GBP/JPY' },
+];
+const HOME_INTERVALS = [['1','1m'],['5','5m'],['15','15m'],['60','1H'],['240','4H'],['D','1D']];
+
+function HomeLiveMarket({ go }) {
+  const [market, setMarket] = useState(HOME_MARKETS[0]);
+  const [interval, setInterval] = useState('15');
+  const [draft, setDraft] = useState('');
+  const src = useMemo(() => {
+    const params = new URLSearchParams({
+      symbol: market.symbol,
+      interval,
+      theme: 'dark',
+      style: '1',
+      locale: 'ja',
+      hide_side_toolbar: '1',
+      allow_symbol_change: '0',
+      save_image: '1',
+      calendar: '0',
+      studies: 'RSI@tv-basicstudies,MAExp@tv-basicstudies',
+      backgroundColor: 'rgba(4, 20, 38, 1)',
+      gridColor: 'rgba(80, 130, 160, 0.16)',
+    });
+    return `https://s.tradingview.com/widgetembed/?${params.toString()}`;
+  }, [market, interval]);
+
+  const ask = () => {
+    const text = draft.trim();
+    sessionStorage.setItem('kizashi_pending_prompt', text || `${market.label}の現在のチャートについて、判断材料と注意点を整理して`);
+    go('coach');
+  };
+
+  return <section className="home-live-dashboard">
+    <div className="home-live-main">
+      <div className="home-live-head">
+        <div><small>📈 LIVE MARKET</small><h2>リアルタイムチャート</h2></div>
+        <span className="home-live-badge"><i/> LIVE</span>
+      </div>
+      <div className="home-live-tabs">
+        <div className="home-live-symbols">{HOME_MARKETS.map(item => <button key={item.symbol} className={item.symbol === market.symbol ? 'active' : ''} onClick={() => setMarket(item)}>{item.label}</button>)}</div>
+        <div className="home-live-intervals">{HOME_INTERVALS.map(([value,label]) => <button key={value} className={interval === value ? 'active' : ''} onClick={() => setInterval(value)}>{label}</button>)}</div>
+      </div>
+      <div className="home-live-chart">
+        <iframe title={`${market.label} live chart`} src={src} loading="eager" allowFullScreen/>
+      </div>
+      <div className="home-live-foot"><span>ローソク足・EMA・RSIを表示</span><button onClick={() => go('live')}>Live画面を開く ↗</button></div>
+    </div>
+    <aside className="home-kizashi-panel">
+      <div className="home-kizashi-title"><span>🤖</span><b>きざしくんからのヒント</b></div>
+      <div className="home-kizashi-bubble">値動きだけで決めず、ロットと損切り位置を先に確認しよう。<small>リアルタイムの売買指示ではなく、判断材料を整理します。</small></div>
+      <div className="home-kizashi-character"><img src="/assets/kizashikun.png" alt="きざしくん"/><span className="home-kizashi-glow">K</span></div>
+      <div className="home-kizashi-chat"><input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') ask(); }} placeholder="きざしくんに質問してみよう…"/><button onClick={ask}>➤</button></div>
+    </aside>
+  </section>;
+}
 
 function TradeImportCard({ go }) {
   const input = useRef(null);
@@ -166,6 +227,8 @@ export default function Home({ go }) {
       <div className="daily-hero-copy"><small>KIZASHI · DAILY DASHBOARD</small><h1>迷いを、確信へ。</h1><p className='hero-subtitle'>データとAIで、あなたのトレードを進化させる。</p><p className='hero-message'>今日も最高の一日をつくりましょう。</p><div className="hero-data-state"><span className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div></div>
       <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong></div>
     </section>
+
+    <HomeLiveMarket go={go}/>
 
     <TradeImportCard go={go}/>
 

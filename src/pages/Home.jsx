@@ -5,6 +5,8 @@ import { useGuardian } from '../context/GuardianContext';
 import { yen } from '../utils/metrics';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNotice } from '../context/NoticeContext';
+import { useApiKey } from '../context/ApiKeyContext';
+import { trackEvent } from '../utils/analytics';
 
 const SESSIONS = [
   { name: '東京', start: 8, end: 16 },
@@ -93,6 +95,11 @@ function HomeLiveMarket({ go }) {
   const [market, setMarket] = useState(HOME_MARKETS[0]);
   const [interval, setInterval] = useState('15');
   const [draft, setDraft] = useState('');
+  const [reply, setReply] = useState('値動きだけで決めず、ロットと損切り位置を先に確認しよう。');
+  const [chatLog, setChatLog] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { apiKey, hasApiKey } = useApiKey();
+  const { rows, metrics, diagnosis, intelligence } = useTradeData();
   const src = useMemo(() => {
     const params = new URLSearchParams({
       symbol: market.symbol,
@@ -111,10 +118,53 @@ function HomeLiveMarket({ go }) {
     return `https://s.tradingview.com/widgetembed/?${params.toString()}`;
   }, [market, interval]);
 
-  const ask = () => {
+  const ask = async () => {
     const text = draft.trim();
-    sessionStorage.setItem('kizashi_pending_prompt', text || `${market.label}の現在のチャートについて、判断材料と注意点を整理して`);
-    go('coach');
+    if (!text || loading) return;
+    if (!hasApiKey) {
+      setReply('AIで答えるにはOpenAI APIキーが必要だよ。管理画面で設定すれば、この場所のまま会話できるよ。');
+      return;
+    }
+
+    setLoading(true);
+    setReply('考え中…');
+    const route = rows.length ? 'analysis' : 'chat';
+    const history = chatLog.slice(-6).map(item => ({ role: item.role, text: item.text }));
+    const normalizedMetrics = {
+      ...metrics,
+      netProfit: metrics.net,
+      profitFactor: metrics.pf,
+      maxDrawdown: metrics.dd,
+      averageWin: metrics.avgWin,
+      averageLoss: metrics.avgLoss,
+    };
+    try {
+      trackEvent('ai_chat', { source: 'home_kizashikun', route, trade_count: rows.length, symbol: market.label, interval });
+      const response = await fetch('/api/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-OpenAI-API-Key': apiKey },
+        body: JSON.stringify({
+          message: `${text}\n\n現在ホームで表示中: ${market.label} / ${HOME_INTERVALS.find(([v]) => v === interval)?.[1] || interval}`,
+          history,
+          route,
+          metrics: normalizedMetrics,
+          diagnosis,
+          intelligence,
+          rows: route === 'analysis' ? rows.slice(-20) : [],
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || 'AIとの通信に失敗しました。');
+      const answer = String(data.answer || '').trim();
+      if (!answer) throw new Error('返答を受け取れませんでした。');
+      setReply(answer);
+      setChatLog(current => [...current, { role: 'user', text }, { role: 'assistant', text: answer }].slice(-12));
+      setDraft('');
+    } catch (error) {
+      setReply(`${error.message} 少し待ってから、もう一度ここで送ってみてね。`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return <section className="home-live-dashboard">
@@ -133,10 +183,14 @@ function HomeLiveMarket({ go }) {
       <div className="home-live-foot"><span>ローソク足・EMA・RSIを表示</span><button onClick={() => go('live')}>Live画面を開く ↗</button></div>
     </div>
     <aside className="home-kizashi-panel">
-      <div className="home-kizashi-title"><span>🤖</span><b>きざしくんからのヒント</b></div>
-      <div className="home-kizashi-bubble">値動きだけで決めず、ロットと損切り位置を先に確認しよう。<small>リアルタイムの売買指示ではなく、判断材料を整理します。</small></div>
+      <div className="home-kizashi-title"><span>🤖</span><b>きざしくん アシスタント</b><em>{loading ? '● 考え中' : '● オンライン'}</em></div>
+      <div className={`home-kizashi-bubble ${loading ? 'loading' : ''}`}>{reply}<small>この画面のまま会話できます。売買を断定せず、判断材料を整理します。</small></div>
       <div className="home-kizashi-character"><img src="/assets/kizashikun.png" alt="きざしくん"/><span className="home-kizashi-glow">K</span></div>
-      <div className="home-kizashi-chat"><input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') ask(); }} placeholder="きざしくんに質問してみよう…"/><button onClick={ask}>➤</button></div>
+      <div className="home-kizashi-quick">
+        <button onClick={() => setDraft('今の相場を見る時の確認ポイントを教えて')}>相場の確認ポイント</button>
+        <button onClick={() => setDraft('今の自分の成績から注意点を一つ教えて')}>今の注意点</button>
+      </div>
+      <div className="home-kizashi-chat"><input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') ask(); }} placeholder="きざしくんに質問してみよう…"/><button onClick={ask} disabled={loading}>{loading ? '…' : '➤'}</button></div>
     </aside>
   </section>;
 }
@@ -221,6 +275,8 @@ export default function Home({ go }) {
   const { metrics, rows, intelligence } = useTradeData();
   const ready = rows.length > 0;
   return <div className="home daily-home page-enter">
+    <TradeImportCard go={go}/>
+
     <section className="daily-hero">
       <div className="hero-bg"/><HeroChart/>
       <div className="daily-hero-overlay"/>
@@ -229,8 +285,6 @@ export default function Home({ go }) {
     </section>
 
     <HomeLiveMarket go={go}/>
-
-    <TradeImportCard go={go}/>
 
     <div className="daily-main-grid">
       <GuardianFocus go={go}/>

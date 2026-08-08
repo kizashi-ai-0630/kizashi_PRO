@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useApiKey } from '../context/ApiKeyContext';
+import { useTradeData } from '../context/TradeDataContext';
+import { trackEvent } from '../utils/analytics';
 
 const LINES = [
   '相場を見ながら、焦らずいこう。',
@@ -12,6 +15,10 @@ export default function KizashiKun({ page, go }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('きざしくんです。今日も一緒に見ていこう🌊');
   const [draft, setDraft] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [chatLog, setChatLog] = useState([]);
+  const { apiKey, hasApiKey } = useApiKey();
+  const { rows, metrics, diagnosis, intelligence } = useTradeData();
   const [position, setPosition] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('kizashi_kun_position') || 'null');
@@ -31,15 +38,15 @@ export default function KizashiKun({ page, go }) {
       growth: '昨日より少しでも前進できたら十分だよ。',
       settings: '設定で自分に合う使い方へ整えよう。',
     };
-    setMessage(pageMessages[page] || LINES[Math.floor(Math.random() * LINES.length)]);
+    if (!loading) setMessage(pageMessages[page] || LINES[Math.floor(Math.random() * LINES.length)]);
   }, [page]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      if (!open) setMessage(LINES[Math.floor(Math.random() * LINES.length)]);
+      if (!open && !loading) setMessage(LINES[Math.floor(Math.random() * LINES.length)]);
     }, 22000);
     return () => window.clearInterval(timer);
-  }, [open]);
+  }, [open, loading]);
 
   const onPointerDown = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -58,22 +65,62 @@ export default function KizashiKun({ page, go }) {
     localStorage.setItem('kizashi_kun_position', JSON.stringify(position));
   };
 
-  const ask = () => {
+  const ask = async () => {
     const text = draft.trim();
-    if (!text) return;
-    sessionStorage.setItem('kizashi_pending_prompt', text);
-    setDraft('');
-    setOpen(false);
-    go('coach');
+    if (!text || loading) return;
+    if (!hasApiKey) {
+      setMessage('AIで答えるにはOpenAI APIキーが必要だよ。管理画面で設定してね。ここから勝手に移動はしないよ。');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('考え中…');
+    const route = rows.length ? 'analysis' : 'chat';
+    const normalizedMetrics = {
+      ...metrics,
+      netProfit: metrics.net,
+      profitFactor: metrics.pf,
+      maxDrawdown: metrics.dd,
+      averageWin: metrics.avgWin,
+      averageLoss: metrics.avgLoss,
+    };
+    try {
+      trackEvent('ai_chat', { source: 'kizashikun_floating', route, page, trade_count: rows.length });
+      const response = await fetch('/api/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-OpenAI-API-Key': apiKey },
+        body: JSON.stringify({
+          message: text,
+          history: chatLog.slice(-6),
+          route,
+          metrics: normalizedMetrics,
+          diagnosis,
+          intelligence,
+          rows: route === 'analysis' ? rows.slice(-20) : [],
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || 'AIとの通信に失敗しました。');
+      const answer = String(data.answer || '').trim();
+      if (!answer) throw new Error('返答を受け取れませんでした。');
+      setMessage(answer);
+      setChatLog(current => [...current, { role: 'user', text }, { role: 'assistant', text: answer }].slice(-12));
+      setDraft('');
+    } catch (error) {
+      setMessage(`${error.message} 少し待って、もう一度ここで聞いてみてね。`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const style = position.x == null ? undefined : { left: position.x, top: position.y, right: 'auto', bottom: 'auto' };
   return <div className="kizashi-kun-wrap" style={style}>
     {message && <button className="kizashi-speech" onClick={() => setOpen(v => !v)}>{message}</button>}
     {open && <div className="kizashi-mini-chat">
-      <b>きざしくんに聞く</b>
-      <textarea value={draft} onChange={e => setDraft(e.target.value)} placeholder="相場や自分の成績について聞いてね" rows={3}/>
-      <div><button onClick={() => setOpen(false)}>閉じる</button><button className="primary" onClick={ask}>AIコーチへ送る</button></div>
+      <b>きざしくんに聞く <span className={loading ? 'thinking' : 'online'}>{loading ? '● 考え中' : '● オンライン'}</span></b>
+      <div className="kizashi-mini-reply">{message}</div>
+      <textarea value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } }} placeholder="相場や自分の成績について聞いてね" rows={3}/>
+      <div><button onClick={() => setOpen(false)}>閉じる</button><button className="primary" onClick={ask} disabled={loading}>{loading ? '考え中…' : 'ここで聞く'}</button></div>
     </div>}
     <button
       className="kizashi-kun"

@@ -1,7 +1,7 @@
 {
-  "name": "kizashi-11-live-mode",
+  "name": "kizashi-11-2-home-inline-assistant",
   "private": true,
-  "version": "11.0.0",
+  "version": "11.2.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",

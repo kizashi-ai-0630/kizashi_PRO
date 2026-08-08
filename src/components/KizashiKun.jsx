@@ -18,6 +18,7 @@ export default function KizashiKun({ page, go }) {
   const [loading, setLoading] = useState(false);
   const [chatLog, setChatLog] = useState([]);
   const [dragging, setDragging] = useState(false);
+  const [motion, setMotion] = useState('idle');
   const { apiKey, hasApiKey } = useApiKey();
   const { rows, metrics, diagnosis, intelligence } = useTradeData();
   const [position, setPosition] = useState(() => {
@@ -73,6 +74,23 @@ export default function KizashiKun({ page, go }) {
     localStorage.setItem('kizashi_kun_position', JSON.stringify(position));
   };
 
+  useEffect(() => {
+    const motions = ['idle', 'sway', 'hop', 'peek'];
+    let timer;
+    const schedule = () => {
+      timer = window.setTimeout(() => {
+        if (!dragging) {
+          const next = motions[Math.floor(Math.random() * motions.length)];
+          setMotion(next);
+          window.setTimeout(() => setMotion('idle'), next === 'idle' ? 2600 : 1500);
+        }
+        schedule();
+      }, 5200 + Math.floor(Math.random() * 3600));
+    };
+    schedule();
+    return () => window.clearTimeout(timer);
+  }, [dragging]);
+
   const ask = async () => {
     const text = draft.trim();
     if (!text || loading) return;
@@ -122,7 +140,7 @@ export default function KizashiKun({ page, go }) {
   };
 
   const style = position.x == null ? undefined : { left: position.x, top: position.y, right: 'auto', bottom: 'auto' };
-  return <div className={`kizashi-kun-wrap${dragging ? ' dragging' : ''}`} style={style}>
+  return <div className={`kizashi-kun-wrap motion-${motion}${dragging ? ' dragging' : ''}`} style={style}>
     {message && <button className="kizashi-speech" onClick={() => setOpen(v => !v)}>{message}</button>}
     {open && <div className="kizashi-mini-chat">
       <b>きざしくんに聞く <span className={loading ? 'thinking' : 'online'}>{loading ? '● 考え中' : '● オンライン'}</span></b>
@@ -133,7 +151,7 @@ export default function KizashiKun({ page, go }) {
     <button
       className="kizashi-kun"
       aria-label="きざしくん。クリックで会話"
-      title="クリックで会話できます"
+      title="クリックで会話できます。左下の小さなマークで移動できます"
       onClick={() => setOpen(v => !v)}
     >
       <img src="/assets/kizashikun.png" alt="きざしくん" draggable="false"/>

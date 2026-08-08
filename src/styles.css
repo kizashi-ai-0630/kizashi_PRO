@@ -330,3 +330,79 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
 
 @media(max-width:760px){.daily-hero{height:620px}.daily-hero-side{left:20px;right:20px;bottom:18px;width:auto}.daily-hero-side .daily-score{padding:14px 16px}.daily-hero-side .daily-score strong{font-size:44px}.home-import-card.home-import-compact{padding:13px 14px}.home-import-compact-actions{grid-template-columns:1fr 1fr 40px}.kizashi-drag-handle{width:30px;height:30px;top:56%}}
 @media(max-width:480px){.daily-hero{height:600px}.daily-hero-side{left:14px;right:14px;bottom:14px}.home-import-compact-head b{font-size:13px}.home-import-compact>p{font-size:9px}}
+
+
+/* KIZASHI 11.4 — compact corner drag handle + lively mascot motion */
+.kizashi-drag-handle{
+  left:2px!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:7px!important;
+  transform:none!important;
+  width:21px!important;
+  height:21px!important;
+  min-width:21px!important;
+  min-height:21px!important;
+  border-width:1px!important;
+  background:rgba(3,28,48,.78)!important;
+  box-shadow:0 3px 9px rgba(3,28,48,.3)!important;
+  opacity:.72!important;
+}
+.kizashi-drag-handle span{font-size:11px!important;line-height:1!important}
+.kizashi-drag-handle:hover{
+  opacity:1!important;
+  background:#0a6683!important;
+  transform:scale(1.08)!important;
+}
+.kizashi-drag-handle:active,.kizashi-kun-wrap.dragging .kizashi-drag-handle{
+  opacity:1!important;
+  transform:scale(.96)!important;
+}
+
+/* The PNG stays original artwork; movement is generated entirely in CSS. */
+.kizashi-kun{animation:none!important;transform-origin:50% 92%;will-change:transform,filter}
+.kizashi-kun img{transform-origin:50% 82%;will-change:transform;backface-visibility:hidden}
+.kizashi-kun-wrap:not(.dragging).motion-idle .kizashi-kun{animation:kzMascotIdle 3.4s ease-in-out infinite!important}
+.kizashi-kun-wrap:not(.dragging).motion-sway .kizashi-kun{animation:kzMascotSway 1.4s ease-in-out 1!important}
+.kizashi-kun-wrap:not(.dragging).motion-hop .kizashi-kun{animation:kzMascotHop 1.25s cubic-bezier(.2,.75,.3,1) 1!important}
+.kizashi-kun-wrap:not(.dragging).motion-peek .kizashi-kun{animation:kzMascotPeek 1.5s ease-in-out 1!important}
+.kizashi-kun-wrap:not(.dragging).motion-sway .kizashi-kun img{animation:kzMascotSleeve 1.4s ease-in-out 1}
+.kizashi-kun-wrap:not(.dragging).motion-hop .kizashi-kun-status{animation:kzStatusPop 1.25s ease-in-out 1}
+
+@keyframes kzMascotIdle{
+  0%,100%{transform:translate3d(0,0,0) rotate(-.8deg)}
+  48%{transform:translate3d(0,-5px,0) rotate(.9deg)}
+  54%{transform:translate3d(0,-5px,0) rotate(.35deg)}
+}
+@keyframes kzMascotSway{
+  0%,100%{transform:translate3d(0,0,0) rotate(0)}
+  25%{transform:translate3d(-3px,-2px,0) rotate(-5deg)}
+  55%{transform:translate3d(3px,-4px,0) rotate(5deg)}
+  78%{transform:translate3d(-1px,-1px,0) rotate(-2deg)}
+}
+@keyframes kzMascotHop{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  18%{transform:translate3d(0,2px,0) scale(1.04,.95)}
+  46%{transform:translate3d(0,-14px,0) scale(.98,1.03) rotate(-1deg)}
+  68%{transform:translate3d(0,-3px,0) scale(1.015,.985) rotate(1deg)}
+}
+@keyframes kzMascotPeek{
+  0%,100%{transform:translate3d(0,0,0) rotate(0)}
+  32%{transform:translate3d(-7px,-2px,0) rotate(-4deg)}
+  62%{transform:translate3d(5px,-2px,0) rotate(3deg)}
+}
+@keyframes kzMascotSleeve{
+  0%,100%{transform:rotate(0) scale(1)}
+  45%{transform:rotate(1.8deg) scale(1.012)}
+}
+@keyframes kzStatusPop{
+  0%,100%{transform:scale(1)}
+  45%{transform:scale(1.16)}
+}
+@media(max-width:900px){
+  .kizashi-drag-handle{left:1px!important;bottom:6px!important;width:19px!important;height:19px!important;min-width:19px!important;min-height:19px!important}
+  .kizashi-drag-handle span{font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .kizashi-kun,.kizashi-kun img,.kizashi-kun-status{animation:none!important;transition:none!important}
+}

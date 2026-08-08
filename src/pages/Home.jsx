@@ -6,7 +6,7 @@ import { yen } from '../utils/metrics';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNotice } from '../context/NoticeContext';
 import { useApiKey } from '../context/ApiKeyContext';
-import { trackEvent } from '../utils/analytics';
+import { getLocalAnalytics, trackEvent } from '../utils/analytics';
 
 const SESSIONS = [
   { name: '東京', start: 8, end: 16 },
@@ -82,6 +82,61 @@ function MarketClock() {
 }
 
 
+function useTodayActivity() {
+  const read = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    return getLocalAnalytics().filter(event => String(event.at || '').slice(0, 10) === today);
+  };
+  const [events, setEvents] = useState(read);
+  useEffect(() => {
+    const sync = () => setEvents(read());
+    window.addEventListener('kizashi:analytics', sync);
+    return () => window.removeEventListener('kizashi:analytics', sync);
+  }, []);
+  return events;
+}
+
+function TodayMission({ ready, go }) {
+  const events = useTodayActivity();
+  const done = {
+    import: ready,
+    ai: events.some(event => event.name === 'ai_chat'),
+    vision: events.some(event => event.name === 'vision_upload'),
+    guardian: events.some(event => event.name === 'page_view' && event.props?.page_name === 'guardian'),
+  };
+  const tasks = [
+    ['import', '履歴を読み込む', ready ? null : 'analysis'],
+    ['ai', 'きざしくんに相談', null],
+    ['vision', 'スクショ解析', 'coach'],
+    ['guardian', 'Guardian確認', 'guardian'],
+  ];
+  const complete = Object.values(done).filter(Boolean).length;
+  return <section className={`today-mission ${complete === tasks.length ? 'complete' : ''}`}>
+    <div className="today-mission-head"><div><small>🎯 TODAY'S MISSION</small><b>{complete === tasks.length ? '今日のミッション達成！' : '今日のミッション'}</b></div><strong>{complete}/{tasks.length}</strong></div>
+    <div className="today-mission-list">{tasks.map(([key,label,target]) => <button key={key} className={done[key] ? 'done' : ''} onClick={() => target && go(target)} disabled={done[key] || !target}><span>{done[key] ? '✓' : '○'}</span>{label}</button>)}</div>
+  </section>;
+}
+
+function useScoreHistory(score, ready) {
+  const [delta, setDelta] = useState(null);
+  useEffect(() => {
+    if (!ready || !Number.isFinite(Number(score))) { setDelta(null); return; }
+    try {
+      const key = 'kizashi_score_history_v1';
+      const today = new Date().toISOString().slice(0, 10);
+      const history = JSON.parse(localStorage.getItem(key) || '{}');
+      const previousDates = Object.keys(history).filter(date => date < today).sort();
+      const previous = previousDates.length ? Number(history[previousDates.at(-1)]) : null;
+      history[today] = Number(score);
+      localStorage.setItem(key, JSON.stringify(history));
+      setDelta(Number.isFinite(previous) ? Number(score) - previous : null);
+    } catch { setDelta(null); }
+  }, [score, ready]);
+  return delta;
+}
+
+
+
 
 const HOME_MARKETS = [
   { symbol: 'OANDA:XAUUSD', label: 'XAU/USD' },
@@ -98,6 +153,8 @@ function HomeLiveMarket({ go }) {
   const [reply, setReply] = useState('値動きだけで決めず、ロットと損切り位置を先に確認しよう。');
   const [chatLog, setChatLog] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(0);
+  const [characterMotion, setCharacterMotion] = useState('idle');
   const { apiKey, hasApiKey } = useApiKey();
   const { rows, metrics, diagnosis, intelligence } = useTradeData();
   const src = useMemo(() => {
@@ -117,6 +174,28 @@ function HomeLiveMarket({ go }) {
     });
     return `https://s.tradingview.com/widgetembed/?${params.toString()}`;
   }, [market, interval]);
+
+  useEffect(() => {
+    setLastRefresh(0);
+    const timer = window.setInterval(() => setLastRefresh(value => Math.min(99, value + 1)), 1000);
+    return () => window.clearInterval(timer);
+  }, [market, interval]);
+
+  useEffect(() => {
+    if (loading) { setCharacterMotion('thinking'); return; }
+    let timer;
+    const motions = ['idle', 'wave', 'sway', 'hop'];
+    const schedule = () => {
+      timer = window.setTimeout(() => {
+        const next = motions[Math.floor(Math.random() * motions.length)];
+        setCharacterMotion(next);
+        window.setTimeout(() => setCharacterMotion('idle'), next === 'idle' ? 2200 : 1300);
+        schedule();
+      }, 4300 + Math.floor(Math.random() * 3200));
+    };
+    schedule();
+    return () => window.clearTimeout(timer);
+  }, [loading]);
 
   const ask = async () => {
     const text = draft.trim();
@@ -158,10 +237,13 @@ function HomeLiveMarket({ go }) {
       const answer = String(data.answer || '').trim();
       if (!answer) throw new Error('返答を受け取れませんでした。');
       setReply(answer);
+      setCharacterMotion('happy');
+      window.setTimeout(() => setCharacterMotion('idle'), 1600);
       setChatLog(current => [...current, { role: 'user', text }, { role: 'assistant', text: answer }].slice(-12));
       setDraft('');
     } catch (error) {
       setReply(`${error.message} 少し待ってから、もう一度ここで送ってみてね。`);
+      setCharacterMotion('warning');
     } finally {
       setLoading(false);
     }
@@ -180,15 +262,17 @@ function HomeLiveMarket({ go }) {
       <div className="home-live-chart">
         <iframe title={`${market.label} live chart`} src={src} loading="eager" allowFullScreen/>
       </div>
-      <div className="home-live-foot"><span>ローソク足・EMA・RSIを表示</span><button onClick={() => go('live')}>Live画面を開く ↗</button></div>
+      <div className="home-live-foot"><span>ローソク足・EMA・RSIを表示 · 表示更新 {lastRefresh}秒前</span><button onClick={() => go('live')}>Live画面を開く ↗</button></div>
     </div>
     <aside className="home-kizashi-panel">
       <div className="home-kizashi-title"><span>🤖</span><b>きざしくん アシスタント</b><em>{loading ? '● 考え中' : '● オンライン'}</em></div>
       <div className={`home-kizashi-bubble ${loading ? 'loading' : ''}`}>{reply}<small>この画面のまま会話できます。売買を断定せず、判断材料を整理します。</small></div>
-      <div className="home-kizashi-character"><img src="/assets/kizashikun.png" alt="きざしくん"/><span className="home-kizashi-glow">K</span></div>
+      <div className={`home-kizashi-character home-motion-${characterMotion}`}><img src="/assets/kizashikun.png" alt="きざしくん"/><span className="home-kizashi-expression">{characterMotion === 'thinking' ? '💭' : characterMotion === 'warning' ? '⚠️' : characterMotion === 'happy' ? '✨' : ''}</span><span className="home-kizashi-glow">K</span></div>
       <div className="home-kizashi-quick">
-        <button onClick={() => setDraft('今の相場を見る時の確認ポイントを教えて')}>相場の確認ポイント</button>
-        <button onClick={() => setDraft('今の自分の成績から注意点を一つ教えて')}>今の注意点</button>
+        <button onClick={() => setDraft('今の相場を見る時の確認ポイントを教えて')}>相場の状況を教えて</button>
+        <button onClick={() => setDraft('今の自分の成績から適正ロットを考える時の確認ポイントを教えて')}>ロットの確認</button>
+        <button onClick={() => setDraft('今日確認しておくべき経済指標や時間帯の注意点を整理して')}>経済指標の確認</button>
+        <button onClick={() => setDraft('今の自分の成績から今日の作戦を一つに絞って')}>今日の作戦を考えて</button>
       </div>
       <div className="home-kizashi-chat"><input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') ask(); }} placeholder="きざしくんに質問してみよう…"/><button onClick={ask} disabled={loading}>{loading ? '…' : '➤'}</button></div>
     </aside>
@@ -230,6 +314,7 @@ function TradeImportCard({ go, compact = false }) {
     }
     const reader = new FileReader();
     reader.onload = () => {
+      trackEvent('vision_upload', { source: 'home', file_size: file.size, file_type: file.type || 'image' });
       try {
         sessionStorage.setItem('kizashi_pending_vision', JSON.stringify({ name: file.name, dataUrl: String(reader.result), size: file.size }));
         go('coach');
@@ -291,6 +376,7 @@ function QuickActions({ go }) {
 export default function Home({ go }) {
   const { metrics, rows, intelligence } = useTradeData();
   const ready = rows.length > 0;
+  const scoreDelta = useScoreHistory(intelligence.score, ready);
   return <div className="home daily-home page-enter">
     <section className="daily-hero">
       <div className="hero-bg"/><HeroChart/>
@@ -298,9 +384,11 @@ export default function Home({ go }) {
       <div className="daily-hero-copy"><small>KIZASHI · DAILY DASHBOARD</small><h1>迷いを、確信へ。</h1><p className='hero-subtitle'>データとAIで、あなたのトレードを進化させる。</p><p className='hero-message'>今日も最高の一日をつくりましょう。</p><div className="hero-data-state"><span className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div></div>
       <div className="daily-hero-side">
         <TradeImportCard go={go} compact/>
-        <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong></div>
+        <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong>{ready && <span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>{scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}</span>}</div>
       </div>
     </section>
+
+    <TodayMission ready={ready} go={go}/>
 
     <HomeLiveMarket go={go}/>
 

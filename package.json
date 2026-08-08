@@ -1,7 +1,7 @@
 {
-  "name": "kizashi-11-4-mascot-motion-corner-drag",
+  "name": "kizashi-12-home-command-center",
   "private": true,
-  "version": "11.4.0",
+  "version": "12.0.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",

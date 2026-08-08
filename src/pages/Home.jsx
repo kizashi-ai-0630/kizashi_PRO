@@ -195,7 +195,7 @@ function HomeLiveMarket({ go }) {
   </section>;
 }
 
-function TradeImportCard({ go }) {
+function TradeImportCard({ go, compact = false }) {
   const input = useRef(null);
   const imageInput = useRef(null);
   const [acceptFilter, setAcceptFilter] = useState('.csv,.html,.htm,text/csv,text/html');
@@ -241,6 +241,23 @@ function TradeImportCard({ go }) {
     reader.readAsDataURL(file);
   };
 
+  if (compact) {
+    return <section className="home-import-card home-import-compact">
+      <input ref={input} type="file" accept={acceptFilter} hidden onChange={load}/>
+      <input ref={imageInput} type="file" accept="image/*" hidden onChange={chooseScreenshot}/>
+      <div className="home-import-compact-head">
+        <div><small>TRADE DATA</small><b>{ready ? 'データ読込済み' : 'データを読み込む'}</b></div>
+        {ready && <button className="home-import-compact-clear" onClick={() => { if (confirm('読み込んだ取引履歴を解除しますか？')) { clearRows(); notify('取引履歴を解除しました', 'info'); } }}>解除</button>}
+      </div>
+      <p>{ready ? `${rows.length}件 · ${fileName || '取引履歴'}` : 'MT4 / MT5 / スクショ'}</p>
+      <div className="home-import-compact-actions">
+        <button onClick={() => chooseFile('.html,.htm,text/html')}>MT4</button>
+        <button onClick={() => chooseFile('.csv,text/csv')}>MT5</button>
+        <button onClick={() => imageInput.current?.click()}>📷</button>
+      </div>
+    </section>;
+  }
+
   return <section className="home-import-card glass-panel">
     <div className="home-import-icon">📂</div>
     <div className="home-import-copy">
@@ -275,13 +292,14 @@ export default function Home({ go }) {
   const { metrics, rows, intelligence } = useTradeData();
   const ready = rows.length > 0;
   return <div className="home daily-home page-enter">
-    <TradeImportCard go={go}/>
-
     <section className="daily-hero">
       <div className="hero-bg"/><HeroChart/>
       <div className="daily-hero-overlay"/>
       <div className="daily-hero-copy"><small>KIZASHI · DAILY DASHBOARD</small><h1>迷いを、確信へ。</h1><p className='hero-subtitle'>データとAIで、あなたのトレードを進化させる。</p><p className='hero-message'>今日も最高の一日をつくりましょう。</p><div className="hero-data-state"><span className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div></div>
-      <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong></div>
+      <div className="daily-hero-side">
+        <TradeImportCard go={go} compact/>
+        <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong></div>
+      </div>
     </section>
 
     <HomeLiveMarket go={go}/>

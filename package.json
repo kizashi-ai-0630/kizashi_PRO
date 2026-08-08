@@ -1,7 +1,7 @@
 {
-  "name": "kizashi-11-2-home-inline-assistant",
+  "name": "kizashi-11-3-precision-drag-compact-import",
   "private": true,
-  "version": "11.2.0",
+  "version": "11.3.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:web\"",

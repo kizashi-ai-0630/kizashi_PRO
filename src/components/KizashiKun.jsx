@@ -17,6 +17,7 @@ export default function KizashiKun({ page, go }) {
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [chatLog, setChatLog] = useState([]);
+  const [dragging, setDragging] = useState(false);
   const { apiKey, hasApiKey } = useApiKey();
   const { rows, metrics, diagnosis, intelligence } = useTradeData();
   const [position, setPosition] = useState(() => {
@@ -49,8 +50,13 @@ export default function KizashiKun({ page, go }) {
   }, [open, loading]);
 
   const onPointerDown = (event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
+    event.preventDefault();
+    event.stopPropagation();
+    const wrap = event.currentTarget.closest('.kizashi-kun-wrap');
+    const rect = wrap?.getBoundingClientRect();
+    if (!rect) return;
     drag.current = { dx: event.clientX - rect.left, dy: event.clientY - rect.top };
+    setDragging(true);
     event.currentTarget.setPointerCapture?.(event.pointerId);
   };
   const onPointerMove = (event) => {
@@ -59,9 +65,11 @@ export default function KizashiKun({ page, go }) {
     const y = Math.max(72, Math.min(window.innerHeight - 150, event.clientY - drag.current.dy));
     setPosition({ x, y });
   };
-  const onPointerUp = () => {
+  const onPointerUp = (event) => {
     if (!drag.current) return;
     drag.current = null;
+    setDragging(false);
+    event?.currentTarget?.releasePointerCapture?.(event.pointerId);
     localStorage.setItem('kizashi_kun_position', JSON.stringify(position));
   };
 
@@ -114,7 +122,7 @@ export default function KizashiKun({ page, go }) {
   };
 
   const style = position.x == null ? undefined : { left: position.x, top: position.y, right: 'auto', bottom: 'auto' };
-  return <div className="kizashi-kun-wrap" style={style}>
+  return <div className={`kizashi-kun-wrap${dragging ? ' dragging' : ''}`} style={style}>
     {message && <button className="kizashi-speech" onClick={() => setOpen(v => !v)}>{message}</button>}
     {open && <div className="kizashi-mini-chat">
       <b>きざしくんに聞く <span className={loading ? 'thinking' : 'online'}>{loading ? '● 考え中' : '● オンライン'}</span></b>
@@ -124,15 +132,25 @@ export default function KizashiKun({ page, go }) {
     </div>}
     <button
       className="kizashi-kun"
-      aria-label="きざしくん。ドラッグで移動、クリックで会話"
-      title="ドラッグで移動できます"
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
+      aria-label="きざしくん。クリックで会話"
+      title="クリックで会話できます"
       onClick={() => setOpen(v => !v)}
     >
       <img src="/assets/kizashikun.png" alt="きざしくん" draggable="false"/>
       <span className="kizashi-kun-status">K</span>
+    </button>
+    <button
+      className="kizashi-drag-handle"
+      type="button"
+      aria-label="きざしくんを移動"
+      title="ここをつかんで移動"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <span>✥</span>
     </button>
   </div>;
 }

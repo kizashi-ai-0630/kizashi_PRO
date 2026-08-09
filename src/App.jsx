@@ -36,5 +36,5 @@ export default function App(){
   const requiresData = new Set(['brain','analysis','coach','records','growth']).has(page);
   const normalContent = requiresData && dataStatus === 'loading' ? <LoadingSkeleton/> : requiresData && dataStatus === 'error' ? <CsvErrorState message={dataError}/> : requiresData && !rows.length ? <CsvEmptyState/> : <Suspense fallback={<AppLoader/>}><PageComponent go={go}/></Suspense>;
   const content = page === 'analytics' ? <AdminGate><Suspense fallback={<AppLoader/>}><AnalyticsAdmin go={go}/></Suspense></AdminGate> : normalContent;
-  return <><OpeningSplash/><BetaWelcome go={go}/><div className="app-shell"><Sidebar page={page} go={go}/><main className={`main main-deep ${page === 'home' ? 'main-home main-home-exact' : ''}`}><Topbar go={go}/>{content}</main><MobileNav page={page} go={go}/><ShareFeedback/>{page !== 'home' && <KizashiKun page={page} go={go}/>}</div></>;
+  return <><OpeningSplash/><BetaWelcome go={go}/><div className="app-shell"><Sidebar page={page} go={go}/><main className={`main main-deep ${page === 'home' ? 'main-home main-home-polished' : ''}`}><Topbar go={go}/>{content}</main><MobileNav page={page} go={go}/><ShareFeedback/>{page !== 'home' && <KizashiKun page={page} go={go}/>}</div></>;
 }

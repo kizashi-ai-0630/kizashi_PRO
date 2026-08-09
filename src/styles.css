@@ -2559,3 +2559,333 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   .main-home-exact .home-hero-clean-score{display:none}
 }
 
+
+/* =========================================================
+   KIZASHI 13.5 — IDEAL HOME CODE
+   Final polish based on the approved compact whale layout.
+   ========================================================= */
+
+/* Keep standard left sidebar + topbar on Home */
+.main-home-polished{
+  background:
+    radial-gradient(circle at 70% -8%, rgba(17,103,155,.12), transparent 28%),
+    linear-gradient(180deg,#031326 0%,#04182d 100%) !important;
+}
+.main-home-polished .daily-home{
+  padding:0 22px 28px !important;
+  width:100%;
+  box-sizing:border-box;
+}
+
+/* Hide every legacy hero so only the clean hero exists */
+.main-home-polished .daily-hero,
+.main-home-polished .home-exact-hero,
+.main-home-polished .home-hero-clean,
+.main-home-polished .unified-hero,
+.main-home-polished .brand-hero,
+.main-home-polished .whale-brand-section{
+  display:none !important;
+}
+
+/* New compact hero */
+.main-home-polished .kizashi-home-hero{
+  position:relative;
+  height:430px;
+  margin:0;
+  overflow:hidden;
+  border-radius:18px;
+  border:1px solid rgba(69,158,197,.24);
+  background:#03152a;
+  box-shadow:0 24px 58px rgba(0,8,24,.34);
+}
+
+/* Whale smaller and more centered-right */
+.main-home-polished .kizashi-home-hero-art{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:
+    url('/assets/kizashi-whale-hero-clean.png') 68% 46% / 92% auto no-repeat;
+  filter:saturate(1.05) contrast(1.05) brightness(.88);
+}
+
+/* Clean left copy zone + darker right card zone */
+.main-home-polished .kizashi-home-hero-overlay{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:
+    linear-gradient(90deg,
+      #031326 0%,
+      rgba(3,19,38,.98) 21%,
+      rgba(3,22,43,.72) 37%,
+      rgba(2,16,34,.12) 60%,
+      rgba(2,14,31,.44) 78%,
+      #020f21 100%
+    ),
+    linear-gradient(180deg,
+      rgba(0,7,18,.02),
+      rgba(0,8,20,.10) 62%,
+      rgba(0,7,18,.48) 100%
+    );
+}
+
+/* Left text */
+.main-home-polished .kizashi-home-copy{
+  position:absolute;
+  z-index:5;
+  left:4.2%;
+  top:34px;
+  width:38%;
+}
+.main-home-polished .kizashi-home-copy>small{
+  color:#51dce9;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:2.1px;
+}
+.main-home-polished .kizashi-home-copy h1{
+  margin:16px 0 10px;
+  color:#fff !important;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:clamp(38px,3vw,54px);
+  line-height:1.08;
+  font-weight:700;
+}
+.main-home-polished .kizashi-home-copy h2{
+  margin:0 0 10px;
+  color:#f5fbff !important;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:clamp(18px,1.55vw,24px);
+  font-weight:700;
+}
+.main-home-polished .kizashi-home-copy p{
+  margin:0 0 16px;
+  color:#d0e1e9 !important;
+  font-size:13px;
+  line-height:1.7;
+}
+.main-home-polished .kizashi-home-actions{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+.main-home-polished .kizashi-home-actions button{
+  height:44px;
+  padding:0 18px;
+  border-radius:9px !important;
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+}
+.main-home-polished .kizashi-home-actions .primary{
+  background:linear-gradient(120deg,#20bdd0,#425dff) !important;
+  color:#fff !important;
+  border:0 !important;
+}
+.main-home-polished .kizashi-home-actions .secondary{
+  background:rgba(3,22,42,.70) !important;
+  color:#edf9ff !important;
+  border:1px solid #6b92a7 !important;
+}
+.main-home-polished .kizashi-home-data-state{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#d5e7ef;
+  font-size:11px;
+  font-weight:800;
+}
+.main-home-polished .kizashi-home-data-state i{
+  width:9px;height:9px;border-radius:50%;
+  background:#617889;
+}
+.main-home-polished .kizashi-home-data-state i.ready{
+  background:#20cc90;
+  box-shadow:0 0 0 5px rgba(32,204,144,.13);
+}
+
+/* Right side cards compact */
+.main-home-polished .kizashi-home-side{
+  position:absolute;
+  z-index:6;
+  top:18px;
+  right:2.2%;
+  width:250px;
+  display:grid;
+  gap:10px;
+}
+.main-home-polished .kizashi-home-side .home-import-card.home-import-compact,
+.main-home-polished .kizashi-home-score{
+  position:static !important;
+  width:100% !important;
+  min-height:0 !important;
+  box-sizing:border-box;
+  border-radius:16px !important;
+  background:rgba(2,24,47,.94) !important;
+  border:1px solid rgba(72,161,197,.28) !important;
+  box-shadow:0 15px 34px rgba(0,7,21,.28) !important;
+}
+.main-home-polished .kizashi-home-side .home-import-card.home-import-compact{
+  padding:14px !important;
+}
+.main-home-polished .kizashi-home-score{
+  padding:15px !important;
+}
+.main-home-polished .kizashi-home-score small{
+  color:#52dce9 !important;
+}
+.main-home-polished .kizashi-home-score-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:10px;
+}
+.main-home-polished .kizashi-home-score-inner>div:first-child{
+  display:grid;
+  gap:8px;
+}
+.main-home-polished .kizashi-home-score strong{
+  color:#fff !important;
+  font-size:46px !important;
+  line-height:.95 !important;
+}
+.main-home-polished .kizashi-home-score span{
+  color:#cbdde6 !important;
+  font-size:10px;
+}
+.main-home-polished .kizashi-home-score-orb{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 55%,#061321 0 45%,transparent 46%),
+    conic-gradient(from 205deg,#24d9d4,#0d8a96 34%,#083048 58%,#0e6875 78%,#24d9d4);
+  box-shadow:inset 0 0 18px rgba(39,230,223,.16);
+}
+
+/* Whale signal */
+.main-home-polished .kizashi-home-whale-signal{
+  position:absolute;
+  z-index:5;
+  right:2.7%;
+  bottom:16px;
+  text-align:right;
+  color:#fff;
+}
+.main-home-polished .kizashi-home-whale-signal small{
+  display:block;
+  color:#51dce9;
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:2px;
+  margin-bottom:6px;
+}
+.main-home-polished .kizashi-home-whale-signal b{
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:18px;
+  font-weight:600;
+}
+.main-home-polished .kizashi-home-whale-signal:after{
+  content:"";
+  display:block;
+  width:76px;
+  height:2px;
+  margin:8px 0 0 auto;
+  background:#36cedc;
+}
+
+/* Mission compact */
+.main-home-polished .today-mission{
+  margin-top:12px !important;
+  min-height:76px !important;
+  padding:0 18px !important;
+  border-radius:14px !important;
+  background:rgba(3,18,35,.90) !important;
+  border:1px solid rgba(55,132,166,.24) !important;
+  box-shadow:none !important;
+}
+
+/* 4 compact market cards are the Home market preview */
+.main-home-polished .home-market-strip{
+  margin-top:12px !important;
+  min-height:94px;
+  border-radius:14px !important;
+  background:rgba(3,18,35,.90) !important;
+}
+.main-home-polished .home-market-mini{
+  min-height:94px !important;
+  padding:12px 16px !important;
+}
+.main-home-polished .home-market-copy strong{
+  font-size:22px !important;
+}
+.main-home-polished .home-market-mini svg{
+  height:36px !important;
+}
+
+/* Home no longer shows the full live chart */
+.main-home-polished .home-live-dashboard{
+  display:none !important;
+}
+
+/* Closing quote */
+.main-home-polished .home-market-strip::after{display:none !important}
+.main-home-polished .home-market-strip + *{
+  margin-top:16px;
+}
+
+/* Tablet */
+@media(max-width:1180px){
+  .main-home-polished .kizashi-home-hero{height:470px}
+  .main-home-polished .kizashi-home-copy{width:42%}
+  .main-home-polished .kizashi-home-side{width:230px}
+  .main-home-polished .kizashi-home-hero-art{
+    background-size:100% auto;
+    background-position:72% 48%;
+  }
+}
+
+/* Mobile */
+@media(max-width:900px){
+  .main-home-polished .daily-home{padding:0 12px 84px !important}
+  .main-home-polished .kizashi-home-hero{height:700px}
+  .main-home-polished .kizashi-home-copy{
+    left:18px;
+    top:26px;
+    width:calc(100% - 36px);
+  }
+  .main-home-polished .kizashi-home-copy h1{font-size:40px}
+  .main-home-polished .kizashi-home-copy h2{font-size:20px}
+  .main-home-polished .kizashi-home-side{
+    left:14px;
+    right:14px;
+    top:auto;
+    bottom:58px;
+    width:auto;
+    grid-template-columns:1fr 1fr;
+  }
+  .main-home-polished .kizashi-home-hero-art{
+    background-size:auto 86%;
+    background-position:72% 48%;
+  }
+  .main-home-polished .kizashi-home-whale-signal{
+    right:16px;
+    bottom:14px;
+  }
+}
+@media(max-width:560px){
+  .main-home-polished .kizashi-home-hero{height:760px}
+  .main-home-polished .kizashi-home-side{grid-template-columns:1fr}
+  .main-home-polished .kizashi-home-score{display:none}
+  .main-home-polished .kizashi-home-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .main-home-polished .kizashi-home-actions button{
+    padding:0 10px;
+    font-size:12px;
+  }
+}
+

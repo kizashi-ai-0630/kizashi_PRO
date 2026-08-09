@@ -373,37 +373,82 @@ function QuickActions({ go }) {
   return <section className="quick-actions">{actions.map(([icon, label, page]) => <button key={page} onClick={() => go(page)}><span>{icon}</span><b>{label}</b><i>›</i></button>)}</section>;
 }
 
+
+const HOME_TOP_NAV = [
+  ['home','⌂','ホーム'],
+  ['live','◈','LIVE'],
+  ['records','▣','記録'],
+  ['coach','♙','AIコーチ'],
+  ['guardian','◉','Guardian'],
+  ['growth','↗','成長'],
+  ['settings','⚙','設定'],
+];
+
+function HomeExactHeader({ go }) {
+  return <header className="home-exact-header">
+    <button className="home-exact-brand" onClick={() => go('home')}>
+      <span className="home-exact-whale">🐋</span>
+      <b>KIZASHI</b>
+      <i>• DAILY DASHBOARD</i>
+    </button>
+    <nav className="home-exact-nav">
+      {HOME_TOP_NAV.map(([id,icon,label]) => <button key={id} className={id === 'home' ? 'active' : ''} onClick={() => go(id)}><span>{icon}</span>{label}</button>)}
+    </nav>
+    <div className="home-exact-tools">
+      <button aria-label="通知">♧</button><button aria-label="ヘルプ">?</button><button aria-label="プロフィール">○</button>
+    </div>
+  </header>;
+}
+
+const SNAPSHOTS = [
+  {symbol:'USD / JPY', price:'147.892', diff:'+0.256  +0.17%', tone:'up', points:'0,30 14,26 25,28 36,18 48,23 60,10 73,16 88,4 100,12 116,2 130,8 145,0'},
+  {symbol:'EUR / JPY', price:'160.421', diff:'-0.214  -0.13%', tone:'down', points:'0,5 14,9 28,22 41,13 56,28 70,34 85,25 101,30 115,18 130,26 145,14'},
+  {symbol:'GBP / JPY', price:'187.653', diff:'+0.327  +0.17%', tone:'up', points:'0,31 13,28 28,21 42,24 57,15 72,18 88,10 101,14 116,7 130,10 145,1'},
+  {symbol:'XAU / USD', price:'2,387.41', diff:'+8.19  +0.34%', tone:'up', points:'0,30 13,25 27,28 42,16 57,20 71,9 86,14 101,3 116,9 130,2 145,5'},
+];
+
+function MarketSnapshotStrip() {
+  return <section className="home-market-strip">
+    {SNAPSHOTS.map(item => <article className="home-market-mini" key={item.symbol}>
+      <div className="home-market-copy"><small>{item.symbol}</small><strong>{item.price}</strong><span className={item.tone}>{item.diff}</span></div>
+      <svg viewBox="0 0 145 36" preserveAspectRatio="none" aria-hidden="true"><polyline className={item.tone} points={item.points}/></svg>
+    </article>)}
+  </section>;
+}
+
 export default function Home({ go }) {
   const { metrics, rows, intelligence } = useTradeData();
   const ready = rows.length > 0;
   const scoreDelta = useScoreHistory(intelligence.score, ready);
   return <div className="home daily-home page-enter">
-    <section className="daily-hero unified-hero">
-      <div className="hero-bg"/><HeroChart/>
-      <div className="daily-hero-overlay"/>
-      <div className="daily-hero-copy unified-hero-copy">
+    <section className="home-exact-hero">
+      <div className="home-exact-whale-art" aria-hidden="true"/>
+      <div className="home-exact-hero-shade" aria-hidden="true"/>
+      <div className="home-exact-copy">
         <small>KIZASHI · AI TRADING ASSISTANT</small>
-        <h1>迷いを、確信へ。</h1>
-        <p className="hero-subtitle">深海の静けさで、相場を見る。</p>
-        <p className="hero-message">データとAIで、あなたのトレードを整理し、次の判断へつなげます。</p>
-        <div className="hero-actions">
-          <button className="hero-action-primary" onClick={() => go('live')}>LIVE MARKET ↗</button>
-          <button className="hero-action-secondary" onClick={() => go('coach')}>きざしくんに相談</button>
+        <h1>迷いを、<br/>確信へ。</h1>
+        <h2>深海の静けさで、相場を見る。</h2>
+        <p>データとAIで、あなたのトレードを整理し、<br/>次の判断へつなげます。</p>
+        <div className="home-exact-actions">
+          <button className="primary" onClick={() => go('live')}>LIVE MARKET ↗</button>
+          <button className="secondary" onClick={() => go('coach')}>▢ きざしくんに相談</button>
         </div>
-        <div className="hero-data-state"><span className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div>
+        <div className="home-exact-data-state"><i className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div>
       </div>
-      <div className="daily-hero-side unified-hero-side">
+      <div className="home-exact-side">
         <TradeImportCard go={go} compact/>
-        <div className="daily-score">
+        <div className="daily-score home-exact-score">
           <small>KIZASHI SCORE</small>
-          <strong>{ready ? intelligence.score : '—'}</strong>
-          {ready && <span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>{scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}</span>}
+          <div className="home-score-inner">
+            <div><strong>{ready ? intelligence.score : '—'}</strong><span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>{scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}</span></div>
+            <div className="home-score-orb" aria-hidden="true"><span/></div>
+          </div>
         </div>
       </div>
-      <div className="whale-signal"><small>WHALE SIGNAL</small><b>迷いを、確信へ。</b></div>
+      <div className="home-whale-signal"><small>🐋 WHALE SIGNAL</small><b>迷いを、確信へ。</b></div>
     </section>
 
-    <TodayMission ready={ready} go={go}/>
+    <TodayMission ready={ready} go={go}/><MarketSnapshotStrip/>
 
     <HomeLiveMarket go={go}/>
 

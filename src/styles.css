@@ -1689,3 +1689,375 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
  .main-deep .unified-hero-side .home-import-card.home-import-compact{min-height:155px !important}
  .main-deep .unified-hero-side .daily-score{min-height:105px !important}
 }
+
+
+/* =========================================================
+   KIZASHI 13.0 — APPROVED HOME EXACT
+   Rebuild the approved whale home as real HTML/CSS.
+   ========================================================= */
+.home-shell-exact{
+  display:block !important;
+  min-height:100vh;
+  background:#020d1d;
+}
+.main-home-exact{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% -5%,rgba(10,79,117,.18),transparent 36%),
+    linear-gradient(180deg,#020d1d 0%,#03162a 58%,#020d1d 100%) !important;
+}
+.main-home-exact::before{display:none !important}
+.home-exact-page{
+  width:100%;
+  margin:0;
+  padding:0 28px 28px;
+  color:#f4fbff;
+}
+
+/* top horizontal nav */
+.home-exact-header{
+  height:70px;
+  margin:0 -28px 0;
+  padding:0 30px;
+  display:grid;
+  grid-template-columns:310px 1fr 170px;
+  align-items:center;
+  gap:20px;
+  background:rgba(1,11,24,.97);
+  border-bottom:1px solid rgba(82,170,208,.17);
+  position:sticky;
+  top:0;
+  z-index:40;
+}
+.home-exact-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:0 !important;
+  background:transparent !important;
+  color:#fff !important;
+  cursor:pointer;
+  padding:0 !important;
+}
+.home-exact-brand .home-exact-whale{font-size:26px}
+.home-exact-brand b{font-size:20px;letter-spacing:1.5px}
+.home-exact-brand i{font-style:normal;color:#46d7e8;font-size:10px;font-weight:900;letter-spacing:1.6px}
+.home-exact-nav{display:flex;justify-content:center;gap:10px}
+.home-exact-nav button{
+  min-height:40px;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  color:#d7e7f0 !important;
+  border-radius:12px;
+  padding:0 14px;
+  font-weight:800;
+  cursor:pointer;
+}
+.home-exact-nav button span{margin-right:7px}
+.home-exact-nav button.active{
+  color:#52dbe9 !important;
+  background:#09243d !important;
+  border-color:#113c5d !important;
+}
+.home-exact-nav button:hover{background:#071d34 !important}
+.home-exact-tools{display:flex;justify-content:flex-end;gap:10px}
+.home-exact-tools button{
+  width:38px;height:38px;border-radius:50% !important;
+  background:transparent !important;
+  color:#eef9ff !important;
+  border:1px solid #31516a !important;
+}
+
+/* hero */
+.home-exact-hero{
+  position:relative;
+  height:615px;
+  margin:0 -28px;
+  overflow:hidden;
+  border-bottom:1px solid rgba(68,171,207,.20);
+  background:#03152a;
+}
+.home-exact-whale-art{
+  position:absolute;
+  z-index:0;
+  left:22%;
+  right:20%;
+  top:0;
+  bottom:0;
+  background:url('/assets/kizashi-whale-hero-clean.png') center center/cover no-repeat;
+  filter:saturate(1.05) contrast(1.08) brightness(.91);
+  transform:scale(1.05);
+}
+.home-exact-hero-shade{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(90deg,#031326 0%,rgba(3,19,38,.94) 15%,rgba(3,22,43,.52) 34%,rgba(2,16,34,.06) 61%,rgba(2,14,31,.74) 83%,#020f21 100%),
+    linear-gradient(180deg,rgba(0,8,20,.00),rgba(0,9,21,.12) 60%,rgba(0,8,20,.56) 100%);
+}
+.home-exact-copy{
+  position:absolute;
+  z-index:3;
+  left:5.2%;
+  top:70px;
+  width:34%;
+}
+.home-exact-copy>small{
+  color:#53dce9;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:2.3px;
+}
+.home-exact-copy h1{
+  margin:25px 0 22px;
+  color:#fff !important;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:clamp(50px,4.3vw,76px);
+  line-height:1.25;
+  font-weight:700;
+  letter-spacing:.01em;
+  text-shadow:0 4px 18px rgba(0,0,0,.28);
+}
+.home-exact-copy h2{
+  margin:0 0 20px;
+  color:#f4fbff !important;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:clamp(21px,2.1vw,31px);
+  font-weight:700;
+}
+.home-exact-copy p{
+  color:#d2e3ec !important;
+  font-size:15px;
+  line-height:1.9;
+  margin:0 0 28px;
+}
+.home-exact-actions{display:flex;gap:14px;margin-bottom:24px}
+.home-exact-actions button{
+  height:54px;
+  border-radius:10px !important;
+  padding:0 26px !important;
+  font-weight:900;
+  font-size:15px;
+  cursor:pointer;
+}
+.home-exact-actions .primary{
+  color:#fff !important;
+  background:linear-gradient(120deg,#23bed1,#4a5dff) !important;
+  border:0 !important;
+  box-shadow:0 10px 28px rgba(33,139,224,.24);
+}
+.home-exact-actions .secondary{
+  color:#eef9ff !important;
+  background:rgba(2,19,38,.60) !important;
+  border:1px solid #6d93a8 !important;
+}
+.home-exact-data-state{
+  display:flex;align-items:center;gap:8px;
+  color:#d7e8f0;font-size:12px;font-weight:800;
+}
+.home-exact-data-state i{
+  width:10px;height:10px;border-radius:50%;background:#5f7789;box-shadow:0 0 0 6px rgba(95,119,137,.08);
+}
+.home-exact-data-state i.ready{background:#22cf92;box-shadow:0 0 0 6px rgba(34,207,146,.13)}
+
+/* right cards */
+.home-exact-side{
+  position:absolute;
+  z-index:5;
+  right:3.6%;
+  top:40px;
+  width:320px;
+  display:grid;
+  gap:18px;
+}
+.home-exact-side .home-import-card.home-import-compact,
+.home-exact-side .home-exact-score{
+  position:static !important;
+  width:100% !important;
+  min-height:0 !important;
+  box-sizing:border-box;
+  border-radius:18px !important;
+  background:rgba(2,24,47,.92) !important;
+  border:1px solid rgba(70,157,192,.28) !important;
+  box-shadow:0 18px 46px rgba(0,7,22,.34) !important;
+  backdrop-filter:blur(14px);
+}
+.home-exact-side .home-import-card.home-import-compact{padding:22px !important}
+.home-exact-side .home-import-compact-head small{color:#53dce9 !important}
+.home-exact-side .home-import-compact-head b{color:#fff !important}
+.home-exact-side .home-import-compact>p{color:#c7dbe6 !important}
+.home-exact-side .home-import-compact-actions button{min-height:44px !important}
+.home-exact-side .home-exact-score{padding:24px !important}
+.home-exact-score small{color:#54d9e8 !important;font-weight:950;letter-spacing:1.8px}
+.home-score-inner{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:16px}
+.home-score-inner>div:first-child{display:grid}
+.home-exact-score strong{font-size:62px !important;line-height:.9 !important;color:#fff !important;margin:0 0 14px !important}
+.home-exact-score span{color:#d4e4ec !important;font-size:11px;font-weight:800}
+.home-score-orb{
+  width:112px;height:112px;border-radius:50%;
+  position:relative;
+  background:
+    radial-gradient(circle at 48% 58%,#04111f 0 46%,transparent 47%),
+    conic-gradient(from 210deg,#1bd5d0,#0f8792 29%,#082b48 52%,#0c6d77 74%,#1bd5d0);
+  box-shadow:inset 0 0 22px rgba(58,238,231,.18),0 0 20px rgba(0,175,191,.08);
+}
+.home-score-orb:after{
+  content:"";position:absolute;left:8px;right:8px;bottom:14px;height:34px;border-radius:50%;
+  background:radial-gradient(ellipse at center,#32e3e0 0%,#138895 35%,rgba(4,26,43,.0) 70%);
+  filter:blur(4px);
+}
+.home-whale-signal{
+  position:absolute;z-index:4;right:4%;bottom:35px;text-align:right;color:#fff;
+}
+.home-whale-signal small{display:block;color:#52dce9;font-size:11px;font-weight:950;letter-spacing:2px;margin-bottom:8px}
+.home-whale-signal b{font-family:Georgia,"Yu Mincho",serif;font-size:25px;font-weight:600}
+.home-whale-signal:after{content:"";display:block;width:108px;height:2px;margin:10px 0 0 auto;background:#36cedc}
+
+/* mission row */
+.home-exact-page>.today-mission{
+  margin:16px 0 0 !important;
+  min-height:104px;
+  border-radius:16px !important;
+  padding:0 28px !important;
+  display:grid !important;
+  grid-template-columns:330px 1fr;
+  align-items:center;
+  background:rgba(3,18,35,.82) !important;
+  border:1px solid rgba(55,132,166,.26) !important;
+  box-shadow:none !important;
+}
+.home-exact-page>.today-mission .today-mission-head{
+  display:grid;grid-template-columns:1fr 90px;align-items:end;gap:20px;margin:0 !important;
+}
+.home-exact-page>.today-mission .today-mission-head small{color:#4fd7e5 !important;letter-spacing:1.6px}
+.home-exact-page>.today-mission .today-mission-head b{font-size:22px}
+.home-exact-page>.today-mission .today-mission-head strong{font-size:38px;color:#34c6d5}
+.home-exact-page>.today-mission .today-mission-list{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  border:1px solid rgba(71,153,184,.18);
+  border-radius:999px;
+  overflow:hidden;
+}
+.home-exact-page>.today-mission .today-mission-list button{
+  min-height:54px;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#d7e7ee !important;
+  font-size:13px;
+}
+.home-exact-page>.today-mission .today-mission-list button.done{color:#dffbf2 !important}
+.home-exact-page>.today-mission .today-mission-list button span{
+  width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;margin-right:8px;
+  border:1px solid #789aaa;
+}
+.home-exact-page>.today-mission .today-mission-list button.done span{background:#26c98c;color:#04261c;border-color:#26c98c}
+
+/* four compact home snapshots */
+.home-market-strip{
+  margin:16px 0 0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  min-height:124px;
+  border:1px solid rgba(53,126,160,.28);
+  border-radius:16px;
+  background:rgba(3,18,35,.82);
+  overflow:hidden;
+}
+.home-market-mini{
+  min-width:0;
+  padding:20px 26px;
+  display:grid;
+  grid-template-columns:1fr 46%;
+  align-items:center;
+  gap:12px;
+  border-right:1px solid rgba(64,130,160,.18);
+}
+.home-market-mini:last-child{border-right:0}
+.home-market-copy{display:grid;gap:5px}
+.home-market-copy small{color:#cadde7;font-size:11px;letter-spacing:1px}
+.home-market-copy strong{color:#fff;font-family:Georgia,serif;font-size:28px;font-weight:600}
+.home-market-copy span{font-size:12px}
+.home-market-copy span.up{color:#22d694}
+.home-market-copy span.down{color:#ff5366}
+.home-market-mini svg{width:100%;height:52px;overflow:visible}
+.home-market-mini polyline{fill:none;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.home-market-mini polyline.up{stroke:#1cc987}
+.home-market-mini polyline.down{stroke:#f04f5f}
+
+/* Closing line before legacy content */
+.home-market-strip:after{display:none}
+.home-exact-page>.home-market-strip + *{margin-top:18px}
+.home-exact-page:after{
+  content:"“　海のように、静かに。クジラのように、確信を持って。　”";
+  display:block;
+  text-align:center;
+  margin:28px 0 8px;
+  color:#b9cfdb;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:20px;
+  letter-spacing:.08em;
+}
+
+/* Hide duplicate/legacy home blocks under the exact hero except useful sections remain available farther down */
+.home-exact-page>.home-live-dashboard{margin-top:26px}
+.home-exact-page>.daily-hero{display:none !important}
+
+/* responsive */
+@media(max-width:1180px){
+  .home-exact-header{grid-template-columns:220px 1fr 130px}
+  .home-exact-brand i{display:none}
+  .home-exact-nav button{padding:0 9px;font-size:12px}
+  .home-exact-copy{left:4%;width:40%}
+  .home-exact-side{width:285px;right:2.4%}
+  .home-exact-page>.today-mission{grid-template-columns:280px 1fr}
+}
+@media(max-width:900px){
+  .home-exact-page{padding:0 14px 84px}
+  .home-exact-header{
+    margin:0 -14px;
+    height:58px;
+    padding:0 16px;
+    grid-template-columns:1fr auto;
+  }
+  .home-exact-nav{display:none}
+  .home-exact-tools button:nth-child(-n+2){display:none}
+  .home-exact-hero{margin:0 -14px;height:760px}
+  .home-exact-whale-art{left:0;right:0;top:30%;bottom:18%;opacity:.88}
+  .home-exact-copy{left:22px;top:40px;width:calc(100% - 44px)}
+  .home-exact-copy h1{font-size:48px}
+  .home-exact-copy h2{font-size:22px}
+  .home-exact-copy p{font-size:13px;max-width:440px}
+  .home-exact-side{
+    left:18px;right:18px;top:auto;bottom:66px;width:auto;
+    grid-template-columns:1fr 1fr;
+  }
+  .home-whale-signal{right:22px;bottom:18px}
+  .home-exact-page>.today-mission{
+    grid-template-columns:1fr;
+    gap:12px;
+    padding:18px !important;
+  }
+  .home-exact-page>.today-mission .today-mission-list{grid-template-columns:1fr 1fr;border-radius:16px}
+  .home-market-strip{grid-template-columns:1fr 1fr}
+  .home-market-mini:nth-child(2){border-right:0}
+  .home-market-mini:nth-child(-n+2){border-bottom:1px solid rgba(64,130,160,.18)}
+}
+@media(max-width:560px){
+  .home-exact-hero{height:820px}
+  .home-exact-copy h1{font-size:42px}
+  .home-exact-actions{display:grid;grid-template-columns:1fr 1fr}
+  .home-exact-actions button{padding:0 10px !important;font-size:12px}
+  .home-exact-side{grid-template-columns:1fr;bottom:58px}
+  .home-exact-side .home-import-card.home-import-compact{padding:14px !important}
+  .home-exact-side .home-exact-score{display:none}
+  .home-market-strip{grid-template-columns:1fr}
+  .home-market-mini{border-right:0;border-bottom:1px solid rgba(64,130,160,.18)}
+  .home-market-mini:last-child{border-bottom:0}
+}
+

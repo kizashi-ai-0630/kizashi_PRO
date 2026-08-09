@@ -2193,3 +2193,60 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   .main-home-exact .home-exact-side{left:16px !important;right:16px !important;top:auto !important;bottom:62px !important;width:auto !important}
 }
 
+
+/* =========================================================
+   KIZASHI 13.2 — HERO GHOST TEXT FIX
+   Keep the real hero copy; remove legacy/duplicate text layers only.
+   ========================================================= */
+
+/* Old hero copy / CTA layers must never sit underneath the approved hero. */
+.main-home-exact .home-exact-hero .daily-hero-copy,
+.main-home-exact .home-exact-hero .hero-copy:not(.home-exact-copy),
+.main-home-exact .home-exact-hero .hero-content:not(.home-exact-copy),
+.main-home-exact .home-exact-hero .brand-copy,
+.main-home-exact .home-exact-hero .whale-copy,
+.main-home-exact .home-exact-hero .legacy-copy,
+.main-home-exact .home-exact-hero .hero-actions:not(.home-exact-actions),
+.main-home-exact .home-exact-hero .legacy-actions,
+.main-home-exact .home-exact-hero .old-hero-copy,
+.main-home-exact .home-exact-hero .old-hero-actions{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Kill decorative pseudo-elements that contain old text/labels. */
+.main-home-exact .home-exact-hero::before,
+.main-home-exact .home-exact-hero::after,
+.main-home-exact .home-exact-whale-art::before,
+.main-home-exact .home-exact-whale-art::after,
+.main-home-exact .home-exact-hero-shade::before,
+.main-home-exact .home-exact-hero-shade::after{
+  content:"" !important;
+}
+
+/* Approved foreground copy stays crisp and above all artwork. */
+.main-home-exact .home-exact-copy{
+  position:absolute !important;
+  z-index:20 !important;
+  isolation:isolate;
+}
+.main-home-exact .home-exact-copy *,
+.main-home-exact .home-exact-actions *{
+  opacity:1;
+  text-shadow:none;
+}
+
+/* Artwork stays behind text and cannot carry HTML overlay labels. */
+.main-home-exact .home-exact-whale-art{z-index:1 !important}
+.main-home-exact .home-exact-hero-shade{z-index:2 !important}
+.main-home-exact .home-exact-side,
+.main-home-exact .home-whale-signal{z-index:20 !important}
+
+/* Hide known duplicate text/button siblings left by older Home revisions. */
+.main-home-exact .home-exact-copy ~ .home-exact-copy,
+.main-home-exact .home-exact-actions ~ .home-exact-actions{
+  display:none !important;
+}
+

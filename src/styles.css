@@ -2298,3 +2298,264 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   z-index:20 !important;
 }
 
+
+/* =========================================================
+   KIZASHI 13.4 — REBUILT HOME HERO
+   Clean rebuild. No legacy hero layers.
+   ========================================================= */
+
+/* Disable every previous hero implementation completely. */
+.main-home-exact .home-exact-hero,
+.main-home-exact .daily-hero,
+.main-home-exact .unified-hero,
+.main-home-exact .brand-hero,
+.main-home-exact .whale-brand-section{
+  display:none !important;
+}
+
+/* New hero */
+.main-home-exact .home-hero-clean{
+  position:relative;
+  height:500px;
+  margin:0;
+  border-radius:20px;
+  overflow:hidden;
+  border:1px solid rgba(67,156,195,.26);
+  background:#03152a;
+  box-shadow:0 26px 64px rgba(0,8,25,.38);
+}
+
+/* Use the clean whale crop as artwork; text is only HTML now. */
+.main-home-exact .home-hero-clean-bg{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:
+    url('/assets/kizashi-whale-hero-clean.png') 68% 46% / 118% auto no-repeat;
+  filter:saturate(1.06) contrast(1.06) brightness(.88);
+}
+
+/* Mask the left copy zone and right edge for readable cards. */
+.main-home-exact .home-hero-clean-overlay{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:
+    linear-gradient(90deg,
+      #031326 0%,
+      rgba(3,19,38,.97) 22%,
+      rgba(3,22,43,.72) 38%,
+      rgba(2,16,34,.12) 61%,
+      rgba(2,14,31,.52) 80%,
+      #020f21 100%
+    ),
+    linear-gradient(180deg,
+      rgba(0,8,20,.02),
+      rgba(0,9,21,.10) 62%,
+      rgba(0,8,20,.55) 100%
+    );
+}
+
+.main-home-exact .home-hero-clean-copy{
+  position:absolute;
+  z-index:5;
+  left:4.5%;
+  top:46px;
+  width:37%;
+}
+
+.main-home-exact .home-hero-clean-copy>small{
+  color:#53dce9;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:2.2px;
+}
+
+.main-home-exact .home-hero-clean-copy h1{
+  margin:18px 0 14px;
+  color:#fff !important;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:clamp(42px,3.7vw,64px);
+  line-height:1.12;
+  font-weight:700;
+  text-shadow:0 4px 18px rgba(0,0,0,.30);
+}
+
+.main-home-exact .home-hero-clean-copy h2{
+  margin:0 0 14px;
+  color:#f4fbff !important;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:clamp(20px,1.8vw,28px);
+  font-weight:700;
+}
+
+.main-home-exact .home-hero-clean-copy p{
+  margin:0 0 20px;
+  color:#d4e5ee !important;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.main-home-exact .home-hero-clean-actions{
+  display:flex;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.main-home-exact .home-hero-clean-actions button{
+  height:48px;
+  padding:0 20px;
+  border-radius:10px !important;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.main-home-exact .home-hero-clean-actions .primary{
+  background:linear-gradient(120deg,#25bdd2,#4b5fff) !important;
+  color:#fff !important;
+  border:0 !important;
+}
+
+.main-home-exact .home-hero-clean-actions .secondary{
+  background:rgba(2,19,38,.68) !important;
+  color:#eef9ff !important;
+  border:1px solid #6f96aa !important;
+}
+
+.main-home-exact .home-hero-clean-state{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#d8e9f1;
+  font-size:12px;
+  font-weight:800;
+}
+
+.main-home-exact .home-hero-clean-state i{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#5d7486;
+  box-shadow:0 0 0 6px rgba(93,116,134,.10);
+}
+.main-home-exact .home-hero-clean-state i.ready{
+  background:#23cf92;
+  box-shadow:0 0 0 6px rgba(35,207,146,.14);
+}
+
+/* Right cards */
+.main-home-exact .home-hero-clean-side{
+  position:absolute;
+  z-index:6;
+  top:24px;
+  right:2.4%;
+  width:280px;
+  display:grid;
+  gap:12px;
+}
+
+.main-home-exact .home-hero-clean-side .home-import-card.home-import-compact,
+.main-home-exact .home-hero-clean-score{
+  position:static !important;
+  width:100% !important;
+  min-height:0 !important;
+  box-sizing:border-box;
+  border-radius:18px !important;
+  background:rgba(2,24,47,.93) !important;
+  border:1px solid rgba(70,157,192,.28) !important;
+  box-shadow:0 18px 46px rgba(0,7,22,.32) !important;
+  backdrop-filter:blur(14px);
+}
+
+.main-home-exact .home-hero-clean-side .home-import-card.home-import-compact{
+  padding:16px !important;
+}
+.main-home-exact .home-hero-clean-score{
+  padding:18px !important;
+}
+.main-home-exact .home-hero-clean-score strong{
+  font-size:50px !important;
+  color:#fff !important;
+}
+.main-home-exact .home-hero-clean-score small{
+  color:#53dce9 !important;
+}
+.main-home-exact .home-hero-clean-score span{
+  color:#d1e2ea !important;
+}
+.main-home-exact .home-score-orb{
+  width:86px !important;
+  height:86px !important;
+}
+
+/* Whale signal */
+.main-home-exact .home-hero-clean-signal{
+  position:absolute;
+  z-index:5;
+  right:3%;
+  bottom:22px;
+  text-align:right;
+  color:#fff;
+}
+.main-home-exact .home-hero-clean-signal small{
+  display:block;
+  margin-bottom:8px;
+  color:#52dce9;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:2px;
+}
+.main-home-exact .home-hero-clean-signal b{
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:21px;
+  font-weight:600;
+}
+.main-home-exact .home-hero-clean-signal:after{
+  content:"";
+  display:block;
+  width:96px;
+  height:2px;
+  margin:10px 0 0 auto;
+  background:#36cedc;
+}
+
+@media(max-width:1180px){
+  .main-home-exact .home-hero-clean{height:540px}
+  .main-home-exact .home-hero-clean-copy{width:42%}
+  .main-home-exact .home-hero-clean-side{width:250px}
+  .main-home-exact .home-hero-clean-bg{
+    background-position:72% 48%;
+    background-size:auto 112%;
+  }
+}
+@media(max-width:900px){
+  .main-home-exact .home-hero-clean{height:760px}
+  .main-home-exact .home-hero-clean-copy{
+    left:20px;
+    top:32px;
+    width:calc(100% - 40px);
+  }
+  .main-home-exact .home-hero-clean-side{
+    left:16px;
+    right:16px;
+    top:auto;
+    bottom:62px;
+    width:auto;
+    grid-template-columns:1fr 1fr;
+  }
+  .main-home-exact .home-hero-clean-bg{
+    background-position:70% 48%;
+    background-size:auto 100%;
+  }
+}
+@media(max-width:560px){
+  .main-home-exact .home-hero-clean{height:820px}
+  .main-home-exact .home-hero-clean-copy h1{font-size:42px}
+  .main-home-exact .home-hero-clean-actions{display:grid;grid-template-columns:1fr 1fr}
+  .main-home-exact .home-hero-clean-actions button{padding:0 10px;font-size:12px}
+  .main-home-exact .home-hero-clean-side{
+    grid-template-columns:1fr;
+  }
+  .main-home-exact .home-hero-clean-score{display:none}
+}
+

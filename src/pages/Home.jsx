@@ -394,32 +394,45 @@ export default function Home({ go }) {
   const ready = rows.length > 0;
   const scoreDelta = useScoreHistory(intelligence.score, ready);
   return <div className="home daily-home page-enter">
-    <section className="home-exact-hero">
-      <div className="home-exact-whale-art" aria-hidden="true"/>
-      <div className="home-exact-hero-shade" aria-hidden="true"/>
-      <div className="home-exact-copy">
-        <small>KIZASHI · AI TRADING ASSISTANT</small>
-        <h1>迷いを、<br/>確信へ。</h1>
-        <h2>深海の静けさで、相場を見る。</h2>
-        <p>データとAIで、あなたのトレードを整理し、<br/>次の判断へつなげます。</p>
-        <div className="home-exact-actions">
-          <button className="primary" onClick={() => go('live')}>LIVE MARKET ↗</button>
-          <button className="secondary" onClick={() => go('coach')}>▢ きざしくんに相談</button>
+    <section className="home-hero-clean">
+  <div className="home-hero-clean-bg" aria-hidden="true"/>
+  <div className="home-hero-clean-overlay" aria-hidden="true"/>
+  <div className="home-hero-clean-copy">
+    <small>KIZASHI · AI TRADING ASSISTANT</small>
+    <h1>迷いを、<br/>確信へ。</h1>
+    <h2>深海の静けさで、相場を見る。</h2>
+    <p>データとAIで、あなたのトレードを整理し、<br/>次の判断へつなげます。</p>
+    <div className="home-hero-clean-actions">
+      <button className="primary" onClick={() => go('live')}>LIVE MARKET ↗</button>
+      <button className="secondary" onClick={() => go('coach')}>きざしくんに相談</button>
+    </div>
+    <div className="home-hero-clean-state">
+      <i className={ready ? 'ready' : ''}/>
+      {ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}
+    </div>
+  </div>
+
+  <aside className="home-hero-clean-side">
+    <TradeImportCard go={go} compact/>
+    <div className="daily-score home-hero-clean-score">
+      <small>KIZASHI SCORE</small>
+      <div className="home-score-inner">
+        <div>
+          <strong>{ready ? intelligence.score : '—'}</strong>
+          <span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>
+            {scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}
+          </span>
         </div>
-        <div className="home-exact-data-state"><i className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div>
+        <div className="home-score-orb" aria-hidden="true"><span/></div>
       </div>
-      <div className="home-exact-side">
-        <TradeImportCard go={go} compact/>
-        <div className="daily-score home-exact-score">
-          <small>KIZASHI SCORE</small>
-          <div className="home-score-inner">
-            <div><strong>{ready ? intelligence.score : '—'}</strong><span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>{scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}</span></div>
-            <div className="home-score-orb" aria-hidden="true"><span/></div>
-          </div>
-        </div>
-      </div>
-      <div className="home-whale-signal"><small>🐋 WHALE SIGNAL</small><b>迷いを、確信へ。</b></div>
-    </section>
+    </div>
+  </aside>
+
+  <div className="home-hero-clean-signal">
+    <small>WHALE SIGNAL</small>
+    <b>迷いを、確信へ。</b>
+  </div>
+</section>
 
     <TodayMission ready={ready} go={go}/><MarketSnapshotStrip/>
 

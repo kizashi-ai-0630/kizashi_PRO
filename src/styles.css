@@ -2061,3 +2061,135 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   .home-market-mini:last-child{border-bottom:0}
 }
 
+
+/* =========================================================
+   KIZASHI 13.1 — HOME CLEANUP
+   Restore global navigation, fix hero overlap, remove duplicate big Live chart.
+   ========================================================= */
+
+/* Restore standard app shell on Home */
+.home-shell-exact{display:grid !important}
+.main-home-exact{
+  width:auto !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+/* The custom horizontal header is no longer used. */
+.home-exact-header{display:none !important}
+
+/* Fit hero inside the normal content area instead of edge-to-edge viewport. */
+.main-home-exact .home-exact-page{
+  width:100%;
+  padding:0 24px 28px;
+  box-sizing:border-box;
+}
+.main-home-exact .home-exact-hero{
+  margin:0 !important;
+  height:520px !important;
+  border-radius:20px !important;
+  border:1px solid rgba(67,156,195,.26);
+  overflow:hidden;
+}
+
+/* Clean layering: no ghost/duplicate text from underlying artwork or old hero pieces. */
+.main-home-exact .home-exact-whale-art{
+  left:25% !important;
+  right:20% !important;
+  top:0 !important;
+  bottom:0 !important;
+  background-position:center 45% !important;
+  filter:saturate(1.05) contrast(1.08) brightness(.84) !important;
+}
+.main-home-exact .home-exact-hero-shade{
+  background:
+    linear-gradient(90deg,#031326 0%,rgba(3,19,38,.96) 18%,rgba(3,22,43,.58) 38%,rgba(2,16,34,.10) 62%,rgba(2,14,31,.68) 83%,#020f21 100%),
+    linear-gradient(180deg,rgba(0,8,20,.02),rgba(0,9,21,.16) 62%,rgba(0,8,20,.58) 100%) !important;
+}
+.main-home-exact .home-exact-copy{
+  left:4.2% !important;
+  top:52px !important;
+  width:34% !important;
+}
+.main-home-exact .home-exact-copy h1{
+  margin:20px 0 14px !important;
+  font-size:clamp(42px,3.5vw,62px) !important;
+  line-height:1.12 !important;
+}
+.main-home-exact .home-exact-copy h2{
+  margin:0 0 14px !important;
+  font-size:clamp(19px,1.7vw,27px) !important;
+}
+.main-home-exact .home-exact-copy p{
+  margin:0 0 20px !important;
+  font-size:14px !important;
+  line-height:1.75 !important;
+}
+.main-home-exact .home-exact-actions{margin-bottom:18px !important}
+.main-home-exact .home-exact-actions button{
+  height:48px !important;
+  padding:0 20px !important;
+}
+.main-home-exact .home-exact-side{
+  right:2.5% !important;
+  top:28px !important;
+  width:280px !important;
+  gap:12px !important;
+}
+.main-home-exact .home-exact-side .home-import-card.home-import-compact{
+  padding:16px !important;
+}
+.main-home-exact .home-exact-side .home-exact-score{
+  padding:18px !important;
+}
+.main-home-exact .home-exact-score strong{font-size:50px !important}
+.main-home-exact .home-score-orb{width:88px !important;height:88px !important}
+.main-home-exact .home-whale-signal{
+  right:3% !important;
+  bottom:24px !important;
+}
+.main-home-exact .home-whale-signal b{font-size:21px !important}
+
+/* Remove any old duplicate home hero/brand blocks that could visually sit under the new one. */
+.main-home-exact .daily-hero:not(.home-exact-hero),
+.main-home-exact .brand-hero,
+.main-home-exact .whale-brand-section{
+  display:none !important;
+}
+
+/* Compact mission and four-market strip stay; large Live dashboard is removed from Home. */
+.main-home-exact .home-live-dashboard{
+  display:none !important;
+}
+.main-home-exact .home-market-strip{
+  margin-top:14px !important;
+}
+.main-home-exact .home-market-mini{
+  min-height:98px !important;
+  padding:14px 18px !important;
+}
+.main-home-exact .home-market-copy strong{font-size:24px !important}
+.main-home-exact .home-market-mini svg{height:42px !important}
+
+/* Make LIVE CTA more obvious as the gateway to the full chart. */
+.main-home-exact .home-exact-actions .primary{
+  box-shadow:0 0 0 1px rgba(100,224,240,.16),0 12px 28px rgba(32,124,219,.24) !important;
+}
+
+/* Content below markets begins immediately; no duplicate giant chart. */
+.main-home-exact .home-market-strip + .home-live-dashboard{display:none !important}
+
+/* responsive */
+@media(max-width:1180px){
+  .main-home-exact .home-exact-hero{height:560px !important}
+  .main-home-exact .home-exact-copy{width:40% !important}
+  .main-home-exact .home-exact-side{width:250px !important}
+}
+@media(max-width:900px){
+  .main-home-exact .home-exact-page{padding:0 14px 84px}
+  .main-home-exact .home-exact-hero{height:760px !important}
+  .main-home-exact .home-exact-copy{left:20px !important;top:34px !important;width:calc(100% - 40px) !important}
+  .main-home-exact .home-exact-side{left:16px !important;right:16px !important;top:auto !important;bottom:62px !important;width:auto !important}
+}
+

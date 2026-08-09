@@ -249,34 +249,7 @@ function HomeLiveMarket({ go }) {
     }
   };
 
-  return <section className="home-live-dashboard">
-    <div className="home-live-main">
-      <div className="home-live-head">
-        <div><small>📈 LIVE MARKET</small><h2>リアルタイムチャート</h2></div>
-        <span className="home-live-badge"><i/> LIVE</span>
-      </div>
-      <div className="home-live-tabs">
-        <div className="home-live-symbols">{HOME_MARKETS.map(item => <button key={item.symbol} className={item.symbol === market.symbol ? 'active' : ''} onClick={() => setMarket(item)}>{item.label}</button>)}</div>
-        <div className="home-live-intervals">{HOME_INTERVALS.map(([value,label]) => <button key={value} className={interval === value ? 'active' : ''} onClick={() => setInterval(value)}>{label}</button>)}</div>
-      </div>
-      <div className="home-live-chart">
-        <iframe title={`${market.label} live chart`} src={src} loading="eager" allowFullScreen/>
-      </div>
-      <div className="home-live-foot"><span>ローソク足・EMA・RSIを表示 · 表示更新 {lastRefresh}秒前</span><button onClick={() => go('live')}>Live画面を開く ↗</button></div>
-    </div>
-    <aside className="home-kizashi-panel">
-      <div className="home-kizashi-title"><span>🤖</span><b>きざしくん アシスタント</b><em>{loading ? '● 考え中' : '● オンライン'}</em></div>
-      <div className={`home-kizashi-bubble ${loading ? 'loading' : ''}`}>{reply}<small>この画面のまま会話できます。売買を断定せず、判断材料を整理します。</small></div>
-      <div className={`home-kizashi-character home-motion-${characterMotion}`}><img src="/assets/kizashikun.png" alt="きざしくん"/><span className="home-kizashi-expression">{characterMotion === 'thinking' ? '💭' : characterMotion === 'warning' ? '⚠️' : characterMotion === 'happy' ? '✨' : ''}</span><span className="home-kizashi-glow">K</span></div>
-      <div className="home-kizashi-quick">
-        <button onClick={() => setDraft('今の相場を見る時の確認ポイントを教えて')}>相場の状況を教えて</button>
-        <button onClick={() => setDraft('今の自分の成績から適正ロットを考える時の確認ポイントを教えて')}>ロットの確認</button>
-        <button onClick={() => setDraft('今日確認しておくべき経済指標や時間帯の注意点を整理して')}>経済指標の確認</button>
-        <button onClick={() => setDraft('今の自分の成績から今日の作戦を一つに絞って')}>今日の作戦を考えて</button>
-      </div>
-      <div className="home-kizashi-chat"><input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') ask(); }} placeholder="きざしくんに質問してみよう…"/><button onClick={ask} disabled={loading}>{loading ? '…' : '➤'}</button></div>
-    </aside>
-  </section>;
+  return ;
 }
 
 function TradeImportCard({ go, compact = false }) {
@@ -449,8 +422,6 @@ export default function Home({ go }) {
     </section>
 
     <TodayMission ready={ready} go={go}/><MarketSnapshotStrip/>
-
-    <HomeLiveMarket go={go}/>
 
     <div className="daily-main-grid">
       <GuardianFocus go={go}/>

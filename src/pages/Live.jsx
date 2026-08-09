@@ -53,6 +53,16 @@ export default function Live(){
       <div className="live-data-note">価格データはTradingViewウィジェットから表示されます。銘柄や市場により遅延する場合があります。</div>
     </section>
 
+
+    <section className="trade-desk glass-panel">
+      <div className="trade-desk-head"><div><small>FINAL VISION</small><h2>Trading Desk</h2><p>分析 → AI確認 → 発注までを一画面へ。</p></div><span>BRIDGE PREVIEW</span></div>
+      <div className="trade-desk-grid">
+        <div className="trade-desk-card"><small>STEP 01</small><b>Market</b><strong>{market.label}</strong><p>{INTERVALS.find(([v])=>v===interval)?.[1]}チャートを表示中</p></div>
+        <div className="trade-desk-card"><small>STEP 02</small><b>KIZASHI AI</b><strong>判断材料を整理</strong><p>方向を断定せず、根拠・リスク・待つ条件を確認。</p></div>
+        <div className="trade-desk-card trade-order"><small>STEP 03</small><b>Order Bridge</b><strong>Broker接続後に有効化</strong><div><button disabled>BUY</button><button disabled>SELL</button></div><p>現在は設計プレビュー。実売買はまだ行いません。</p></div>
+      </div>
+    </section>
+
     <section className="live-guide-grid">
       <article className="glass-panel"><span>🌊</span><div><small>KIZASHIKUN</small><h3>画面を歩くAI秘書</h3><p>ドラッグで移動できます。吹き出しを押すとAIコーチへ質問を送れます。</p></div></article>
       <article className="glass-panel"><span>🛡️</span><div><small>GUARDIAN READY</small><h3>断定ではなく判断材料</h3><p>「買い・売り」を断定せず、ボラティリティやルール確認をやさしく伝えます。</p></div></article>

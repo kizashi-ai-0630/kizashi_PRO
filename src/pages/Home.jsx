@@ -362,6 +362,26 @@ function TradeImportCard({ go, compact = false }) {
   </section>;
 }
 
+
+function BrandOcean({ go }) {
+  return <section className="brand-ocean">
+    <div className="brand-ocean-media" aria-hidden="true"/>
+    <div className="brand-ocean-shade"/>
+    <div className="brand-ocean-copy">
+      <small>KIZASHI · AI TRADING ASSISTANT</small>
+      <h2>深海の静けさで、<br/>相場を見る。</h2>
+      <p>クジラ、深い青、光、ローソク足。KIZASHIのすべてをこの世界観に統一します。</p>
+      <div className="brand-ocean-actions">
+        <button onClick={() => go('live')}>LIVE MARKET <span>↗</span></button>
+        <button className="ghost" onClick={() => go('coach')}>きざしくんに相談</button>
+      </div>
+    </div>
+    <div className="brand-ocean-mark">
+      <span>WHALE SIGNAL</span><b>迷いを、確信へ。</b><i/>
+    </div>
+  </section>;
+}
+
 function QuickActions({ go }) {
   const actions = [
     ['📈', 'Liveチャート', 'live'],
@@ -387,6 +407,8 @@ export default function Home({ go }) {
         <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong>{ready && <span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>{scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}</span>}</div>
       </div>
     </section>
+
+    <BrandOcean go={go}/>
 
     <TodayMission ready={ready} go={go}/>
 

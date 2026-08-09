@@ -362,26 +362,6 @@ function TradeImportCard({ go, compact = false }) {
   </section>;
 }
 
-
-function BrandOcean({ go }) {
-  return <section className="brand-ocean">
-    <div className="brand-ocean-media" aria-hidden="true"/>
-    <div className="brand-ocean-shade"/>
-    <div className="brand-ocean-copy">
-      <small>KIZASHI · AI TRADING ASSISTANT</small>
-      <h2>深海の静けさで、<br/>相場を見る。</h2>
-      <p>クジラ、深い青、光、ローソク足。KIZASHIのすべてをこの世界観に統一します。</p>
-      <div className="brand-ocean-actions">
-        <button onClick={() => go('live')}>LIVE MARKET <span>↗</span></button>
-        <button className="ghost" onClick={() => go('coach')}>きざしくんに相談</button>
-      </div>
-    </div>
-    <div className="brand-ocean-mark">
-      <span>WHALE SIGNAL</span><b>迷いを、確信へ。</b><i/>
-    </div>
-  </section>;
-}
-
 function QuickActions({ go }) {
   const actions = [
     ['📈', 'Liveチャート', 'live'],
@@ -398,17 +378,30 @@ export default function Home({ go }) {
   const ready = rows.length > 0;
   const scoreDelta = useScoreHistory(intelligence.score, ready);
   return <div className="home daily-home page-enter">
-    <section className="daily-hero">
+    <section className="daily-hero unified-hero">
       <div className="hero-bg"/><HeroChart/>
       <div className="daily-hero-overlay"/>
-      <div className="daily-hero-copy"><small>KIZASHI · DAILY DASHBOARD</small><h1>迷いを、確信へ。</h1><p className='hero-subtitle'>データとAIで、あなたのトレードを進化させる。</p><p className='hero-message'>今日も最高の一日をつくりましょう。</p><div className="hero-data-state"><span className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div></div>
-      <div className="daily-hero-side">
-        <TradeImportCard go={go} compact/>
-        <div className="daily-score"><small>KIZASHI SCORE</small><strong>{ready ? intelligence.score : '—'}</strong>{ready && <span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>{scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}</span>}</div>
+      <div className="daily-hero-copy unified-hero-copy">
+        <small>KIZASHI · AI TRADING ASSISTANT</small>
+        <h1>迷いを、確信へ。</h1>
+        <p className="hero-subtitle">深海の静けさで、相場を見る。</p>
+        <p className="hero-message">データとAIで、あなたのトレードを整理し、次の判断へつなげます。</p>
+        <div className="hero-actions">
+          <button className="hero-action-primary" onClick={() => go('live')}>LIVE MARKET ↗</button>
+          <button className="hero-action-secondary" onClick={() => go('coach')}>きざしくんに相談</button>
+        </div>
+        <div className="hero-data-state"><span className={ready ? 'ready' : ''}/>{ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}</div>
       </div>
+      <div className="daily-hero-side unified-hero-side">
+        <TradeImportCard go={go} compact/>
+        <div className="daily-score">
+          <small>KIZASHI SCORE</small>
+          <strong>{ready ? intelligence.score : '—'}</strong>
+          {ready && <span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>{scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}</span>}
+        </div>
+      </div>
+      <div className="whale-signal"><small>WHALE SIGNAL</small><b>迷いを、確信へ。</b></div>
     </section>
-
-    <BrandOcean go={go}/>
 
     <TodayMission ready={ready} go={go}/>
 

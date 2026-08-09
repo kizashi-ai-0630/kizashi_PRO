@@ -2250,3 +2250,51 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   display:none !important;
 }
 
+
+/* =========================================================
+   KIZASHI 13.3 — BAKED GHOST TEXT REMOVAL
+   The ghost copy is baked into the whale PNG itself.
+   Crop the contaminated left edge out of the visible artwork.
+   No image generation / no feature changes.
+   ========================================================= */
+
+.main-home-exact .home-exact-whale-art{
+  /* Make artwork span the hero, then zoom/reposition so the PNG's
+     old text on the far-left is outside the visible crop. */
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  bottom:0 !important;
+  background-size:auto 124% !important;
+  background-position:72% 48% !important;
+  background-repeat:no-repeat !important;
+  transform:none !important;
+  filter:saturate(1.05) contrast(1.08) brightness(.86) !important;
+}
+
+/* Rebuild a clean dark copy zone over the left side.
+   This fully masks any remaining edge pixels from the old baked copy. */
+.main-home-exact .home-exact-hero-shade{
+  z-index:2 !important;
+  background:
+    linear-gradient(90deg,
+      #031326 0%,
+      #031326 18%,
+      rgba(3,19,38,.97) 27%,
+      rgba(3,20,39,.76) 36%,
+      rgba(2,16,34,.18) 52%,
+      rgba(2,14,31,.48) 79%,
+      #020f21 100%
+    ),
+    linear-gradient(180deg,
+      rgba(0,8,20,.02),
+      rgba(0,9,21,.12) 60%,
+      rgba(0,8,20,.56) 100%
+    ) !important;
+}
+
+/* Approved foreground copy remains untouched and above the mask. */
+.main-home-exact .home-exact-copy{
+  z-index:20 !important;
+}
+

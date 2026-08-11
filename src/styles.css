@@ -2889,3 +2889,56 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   }
 }
 
+
+/* =========================================================
+   KIZASHI 13.6 — MARKET DATA + WHALE SIZE RETRY
+   ========================================================= */
+
+/* Previous retry was still too large. Make the whale clearly smaller
+   and preserve more water / candlestick breathing room around it. */
+.main-home-polished .kizashi-home-hero-art{
+  background-size:76% auto !important;
+  background-position:64% 46% !important;
+  filter:saturate(1.05) contrast(1.04) brightness(.92) !important;
+}
+
+/* Keep the left copy zone close to the approved reference proportions. */
+.main-home-polished .kizashi-home-copy{
+  left:3.9% !important;
+  top:32px !important;
+  width:35% !important;
+}
+
+/* Current/live indicator in each compact market tile. */
+.main-home-polished .home-market-copy small{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.main-home-polished .market-live-dot{
+  display:inline-block;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#617889;
+  opacity:.7;
+}
+.main-home-polished .market-live-dot.live{
+  background:#20cf91;
+  opacity:1;
+  box-shadow:0 0 0 3px rgba(32,207,145,.10);
+}
+
+@media(max-width:1180px){
+  .main-home-polished .kizashi-home-hero-art{
+    background-size:82% auto !important;
+    background-position:67% 48% !important;
+  }
+}
+@media(max-width:900px){
+  .main-home-polished .kizashi-home-hero-art{
+    background-size:auto 72% !important;
+    background-position:68% 52% !important;
+  }
+}
+

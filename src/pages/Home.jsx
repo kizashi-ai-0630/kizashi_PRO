@@ -373,19 +373,105 @@ function HomeExactHeader({ go }) {
   </header>;
 }
 
-const SNAPSHOTS = [
-  {symbol:'USD / JPY', price:'147.892', diff:'+0.256  +0.17%', tone:'up', points:'0,30 14,26 25,28 36,18 48,23 60,10 73,16 88,4 100,12 116,2 130,8 145,0'},
-  {symbol:'EUR / JPY', price:'160.421', diff:'-0.214  -0.13%', tone:'down', points:'0,5 14,9 28,22 41,13 56,28 70,34 85,25 101,30 115,18 130,26 145,14'},
-  {symbol:'GBP / JPY', price:'187.653', diff:'+0.327  +0.17%', tone:'up', points:'0,31 13,28 28,21 42,24 57,15 72,18 88,10 101,14 116,7 130,10 145,1'},
-  {symbol:'XAU / USD', price:'2,387.41', diff:'+8.19  +0.34%', tone:'up', points:'0,30 13,25 27,28 42,16 57,20 71,9 86,14 101,3 116,9 130,2 145,5'},
+const MARKET_FALLBACKS = [
+  {symbol:'USD / JPY', key:'USDJPY', price:159.288, previous:159.221, decimals:3},
+  {symbol:'EUR / JPY', key:'EURJPY', price:183.802, previous:183.818, decimals:3},
+  {symbol:'GBP / JPY', key:'GBPJPY', price:215.066, previous:215.000, decimals:3},
+  {symbol:'XAU / USD', key:'XAUUSD', price:4373.22, previous:4390.26, decimals:2},
 ];
 
+function sparklinePoints(values = []) {
+  if (!Array.isArray(values) || values.length < 2) return '0,24 18,22 36,18 54,20 72,14 90,16 108,10 126,12 145,6';
+  const clean = values.filter(Number.isFinite);
+  if (clean.length < 2) return '0,24 18,22 36,18 54,20 72,14 90,16 108,10 126,12 145,6';
+  const min = Math.min(...clean);
+  const max = Math.max(...clean);
+  const span = Math.max(max - min, 0.000001);
+  return clean.map((value, index) => {
+    const x = clean.length === 1 ? 0 : (index / (clean.length - 1)) * 145;
+    const y = 31 - ((value - min) / span) * 25;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+}
+
+function formatMarketPrice(value, decimals = 3) {
+  if (!Number.isFinite(Number(value))) return '—';
+  return Number(value).toLocaleString('en-US', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
+function useHomeMarkets() {
+  const [markets, setMarkets] = useState(() => MARKET_FALLBACKS.map(item => ({
+    ...item,
+    diff: item.price - item.previous,
+    percent: ((item.price - item.previous) / item.previous) * 100,
+    history: [item.previous, item.price],
+    live: false,
+  })));
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const response = await fetch('/api/market-prices', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        if (!cancelled && Array.isArray(payload?.markets)) {
+          const byKey = Object.fromEntries(payload.markets.map(item => [item.key, item]));
+          setMarkets(MARKET_FALLBACKS.map(fallback => {
+            const remote = byKey[fallback.key];
+            if (!remote || !Number.isFinite(Number(remote.price))) {
+              return {
+                ...fallback,
+                diff: fallback.price - fallback.previous,
+                percent: ((fallback.price - fallback.previous) / fallback.previous) * 100,
+                history: [fallback.previous, fallback.price],
+                live: false,
+              };
+            }
+            return {
+              ...fallback,
+              ...remote,
+              price: Number(remote.price),
+              previous: Number(remote.previous ?? remote.price),
+              diff: Number(remote.diff ?? (remote.price - (remote.previous ?? remote.price))),
+              percent: Number(remote.percent ?? 0),
+              history: Array.isArray(remote.history) ? remote.history.map(Number).filter(Number.isFinite) : [Number(remote.previous ?? remote.price), Number(remote.price)],
+              live: true,
+            };
+          }));
+        }
+      } catch {
+        // Keep researched fallbacks when a public quote source is temporarily unavailable.
+      }
+    };
+    load();
+    const timer = window.setInterval(load, 60000);
+    return () => { cancelled = true; window.clearInterval(timer); };
+  }, []);
+
+  return markets;
+}
+
 function MarketSnapshotStrip() {
+  const markets = useHomeMarkets();
   return <section className="home-market-strip">
-    {SNAPSHOTS.map(item => <article className="home-market-mini" key={item.symbol}>
-      <div className="home-market-copy"><small>{item.symbol}</small><strong>{item.price}</strong><span className={item.tone}>{item.diff}</span></div>
-      <svg viewBox="0 0 145 36" preserveAspectRatio="none" aria-hidden="true"><polyline className={item.tone} points={item.points}/></svg>
-    </article>)}
+    {markets.map(item => {
+      const tone = Number(item.diff) >= 0 ? 'up' : 'down';
+      const diffText = `${Number(item.diff) >= 0 ? '+' : ''}${Number(item.diff).toFixed(item.decimals)}  ${Number(item.percent) >= 0 ? '+' : ''}${Number(item.percent).toFixed(2)}%`;
+      return <article className="home-market-mini" key={item.symbol} title={item.live ? '市場データ更新中' : '参考値（通信時に自動更新）'}>
+        <div className="home-market-copy">
+          <small>{item.symbol}<i className={item.live ? 'market-live-dot live' : 'market-live-dot'}/></small>
+          <strong>{formatMarketPrice(item.price, item.decimals)}</strong>
+          <span className={tone}>{diffText}</span>
+        </div>
+        <svg viewBox="0 0 145 36" preserveAspectRatio="none" aria-hidden="true">
+          <polyline className={tone} points={sparklinePoints(item.history)}/>
+        </svg>
+      </article>;
+    })}
   </section>;
 }
 

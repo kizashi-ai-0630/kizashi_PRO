@@ -2942,3 +2942,11 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   }
 }
 
+
+/* KIZASHI 13.7 — SPARKLINE FIX */
+.main-home-polished .home-market-mini svg{width:42%!important;height:42px!important;overflow:visible}
+.main-home-polished .home-market-mini svg polyline{fill:none!important;stroke-width:2.1!important;stroke-linecap:round!important;stroke-linejoin:round!important;vector-effect:non-scaling-stroke}
+.main-home-polished .home-market-mini svg polyline.up{stroke:#16d59a!important}
+.main-home-polished .home-market-mini svg polyline.down{stroke:#ff4961!important}
+.main-home-polished .home-market-mini .up{color:#16d59a!important}
+.main-home-polished .home-market-mini .down{color:#ff4961!important}

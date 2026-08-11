@@ -19,8 +19,13 @@ async function fetchYahoo(symbol) {
   if (!result) throw new Error(`Yahoo ${symbol}: no result`);
 
   const closes = (result.indicators?.quote?.[0]?.close || [])
-    .map(Number)
-    .filter(Number.isFinite);
+    .map(value => value == null ? NaN : Number(value))
+    .filter(value => Number.isFinite(value) && value > 0);
+
+  const maxPoints = 28;
+  const step = Math.max(1, Math.floor(closes.length / maxPoints));
+  const sampled = closes.filter((_, index) => index % step === 0);
+  if (closes.length && sampled.at(-1) !== closes.at(-1)) sampled.push(closes.at(-1));
 
   const meta = result.meta || {};
   const price = Number(meta.regularMarketPrice ?? closes.at(-1));
@@ -34,7 +39,7 @@ async function fetchYahoo(symbol) {
     previous,
     diff,
     percent,
-    history: closes.slice(-24),
+    history: sampled.slice(-28),
   };
 }
 

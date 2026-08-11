@@ -1,0 +1,1 @@
+Market mini-chart fix: invalid ticks removed, outliers filtered, robust scaling, rising green / falling red. Code only.

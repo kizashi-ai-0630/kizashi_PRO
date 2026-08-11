@@ -380,16 +380,34 @@ const MARKET_FALLBACKS = [
   {symbol:'XAU / USD', key:'XAUUSD', price:4373.22, previous:4390.26, decimals:2},
 ];
 
+function sanitizeSparkline(values = []) {
+  const raw = Array.isArray(values) ? values.map(Number).filter(Number.isFinite) : [];
+  if (raw.length < 2) return raw;
+  const cleaned = raw.filter((value, index, arr) => {
+    if (index === 0 || index === arr.length - 1) return true;
+    const prev = arr[index - 1], next = arr[index + 1];
+    const mid = (prev + next) / 2;
+    const normalMove = Math.max(Math.abs(next - prev), Math.abs(mid) * 0.00008);
+    return Math.abs(value - mid) <= normalMove * 6;
+  });
+  return cleaned.length >= 2 ? cleaned : raw;
+}
+
 function sparklinePoints(values = []) {
-  if (!Array.isArray(values) || values.length < 2) return '0,24 18,22 36,18 54,20 72,14 90,16 108,10 126,12 145,6';
-  const clean = values.filter(Number.isFinite);
-  if (clean.length < 2) return '0,24 18,22 36,18 54,20 72,14 90,16 108,10 126,12 145,6';
-  const min = Math.min(...clean);
-  const max = Math.max(...clean);
-  const span = Math.max(max - min, 0.000001);
+  const clean = sanitizeSparkline(values);
+  if (clean.length < 2) return '0,20 18,19 36,17 54,18 72,15 90,16 108,13 126,14 145,11';
+
+  const sorted = [...clean].sort((a,b) => a-b);
+  const at = p => sorted[Math.floor((sorted.length - 1) * p)];
+  let low = at(.05), high = at(.95);
+  if (high <= low) { low = Math.min(...clean); high = Math.max(...clean); }
+  const span = Math.max(high - low, Math.abs(clean[0]) * .00005, .000001);
+  low -= span * .18; high += span * .18;
+
   return clean.map((value, index) => {
-    const x = clean.length === 1 ? 0 : (index / (clean.length - 1)) * 145;
-    const y = 31 - ((value - min) / span) * 25;
+    const v = Math.min(high, Math.max(low, value));
+    const x = index / (clean.length - 1) * 145;
+    const y = 30 - ((v - low) / (high - low)) * 24;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
 }
@@ -459,7 +477,11 @@ function MarketSnapshotStrip() {
   const markets = useHomeMarkets();
   return <section className="home-market-strip">
     {markets.map(item => {
-      const tone = Number(item.diff) >= 0 ? 'up' : 'down';
+      const visibleHistory = sanitizeSparkline(item.history);
+      const intervalMove = visibleHistory.length >= 2
+        ? visibleHistory[visibleHistory.length - 1] - visibleHistory[0]
+        : Number(item.diff);
+      const tone = intervalMove >= 0 ? 'up' : 'down';
       const diffText = `${Number(item.diff) >= 0 ? '+' : ''}${Number(item.diff).toFixed(item.decimals)}  ${Number(item.percent) >= 0 ? '+' : ''}${Number(item.percent).toFixed(2)}%`;
       return <article className="home-market-mini" key={item.symbol} title={item.live ? '市場データ更新中' : '参考値（通信時に自動更新）'}>
         <div className="home-market-copy">

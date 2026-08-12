@@ -34,12 +34,17 @@ async function fetchYahoo(symbol) {
 
   const diff = price - previous;
   const percent = previous ? (diff / previous) * 100 : 0;
+  const bid = Number(meta.bid);
+  const ask = Number(meta.ask);
   return {
     price,
     previous,
     diff,
     percent,
     history: sampled.slice(-32),
+    guardianHistory: closes.slice(-288),
+    bid: Number.isFinite(bid) && bid > 0 ? bid : null,
+    ask: Number.isFinite(ask) && ask > 0 ? ask : null,
   };
 }
 

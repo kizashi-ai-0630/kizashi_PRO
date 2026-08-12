@@ -3,10 +3,11 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 const GuardianContext = createContext(null);
 
 const DEFAULT_RULES = [
+  { id: 'ma', label: '移動平均線 (MA)', enabled: true, detail: '短期と長期の方向・クロス状態を確認' },
   { id: 'atr', label: 'ATR / ボラティリティ', enabled: true, detail: '急激な値動きと低ボラ状態を検知' },
-  { id: 'rsi', label: 'RSIゾーン', enabled: true, detail: '登録済みの過熱・反転候補ゾーンを確認' },
+  { id: 'rsi', label: 'RSIゾーン', enabled: true, detail: '5分・1時間の過熱 / 売られ過ぎを確認' },
   { id: 'session', label: '市場セッション', enabled: true, detail: '東京・ロンドン・NY時間を区別' },
-  { id: 'spread', label: 'スプレッド', enabled: false, detail: '異常な拡大を監視（Live連携準備）' },
+  { id: 'spread', label: 'スプレッド', enabled: true, detail: '取得可能な場合に現在スプレッドを表示' },
 ];
 
 const DEFAULT_EVENTS = [
@@ -21,8 +22,13 @@ export function GuardianProvider({ children }) {
     catch { return ['USDJPY', 'EURJPY', 'GBPJPY']; }
   });
   const [rules, setRules] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('kizashi_guardian_rules')) || DEFAULT_RULES; }
-    catch { return DEFAULT_RULES; }
+    try {
+      const saved = JSON.parse(localStorage.getItem('kizashi_guardian_rules')) || [];
+      return DEFAULT_RULES.map(defaultRule => {
+        const old = saved.find(rule => rule.id === defaultRule.id);
+        return old ? { ...defaultRule, enabled: old.enabled } : defaultRule;
+      });
+    } catch { return DEFAULT_RULES; }
   });
   const [events, setEvents] = useState(DEFAULT_EVENTS);
 

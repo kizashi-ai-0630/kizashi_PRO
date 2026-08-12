@@ -3016,3 +3016,79 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
 .sidebar .sidebar-group-items button{width:100%;min-width:0}
 .sidebar .sidebar-menu-group+ .sidebar-menu-group{padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
 @media(max-height:850px) and (min-width:761px){.sidebar .sidebar-grouped-nav{gap:5px}.sidebar .sidebar-menu-group{grid-template-columns:24px minmax(0,1fr)}.sidebar .sidebar-group-items{gap:2px}.sidebar .sidebar-menu-group+ .sidebar-menu-group{padding-top:5px}.sidebar .sidebar-group-title span{font-size:8px}}
+
+
+/* =========================================================
+   KIZASHI 13.14 — Guardian single-currency monitor
+   ========================================================= */
+.guardian-v2 .guardian-title-row{margin-bottom:18px}
+.guardian-v2-master{display:flex;align-items:center;gap:8px}
+.guardian-v2-master>span{min-width:54px;height:38px;display:grid;place-items:center;border-radius:99px;background:#e9f7f9;color:#087f90;font-weight:900}
+.guardian-v2-master button{height:40px;padding:0 18px;border:1px solid #18bdc7;background:#13b9c3;color:white;font-weight:900;cursor:pointer}
+.guardian-v2-master button:first-of-type{border-radius:10px 0 0 10px}
+.guardian-v2-master button.off{margin-left:-8px;border-radius:0 10px 10px 0;background:#082942;color:#dceaf0;border-color:#31566b}
+
+.guardian-symbol-switcher{margin-bottom:12px}
+.guardian-symbol-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.guardian-symbol-tabs button{height:46px;border-radius:11px;border:1px solid #315b70;background:#082a43;color:#dceaf0;font-weight:900;font-size:14px;cursor:pointer}
+.guardian-symbol-tabs button.active{background:linear-gradient(120deg,#14b8c4,#0d879b);border-color:#4ddce5;color:white;box-shadow:0 0 0 2px rgba(29,199,211,.10)}
+.guardian-selected-monitor{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border:1px solid #315c70;border-radius:14px;background:linear-gradient(120deg,#06243c,#083d56);color:white}
+.guardian-selected-monitor>div:first-child{display:grid;grid-template-columns:auto auto;align-items:center;gap:3px 12px}
+.guardian-selected-monitor small{color:#65dce5;font-weight:900;letter-spacing:1.2px}
+.guardian-selected-monitor strong{grid-column:1;font-size:28px}
+.guardian-selected-monitor>div:first-child span{grid-column:2;grid-row:1/3;color:#8499a4;font-size:10px;font-weight:900}
+.guardian-selected-monitor>div:first-child span.live{color:#2bd696}
+.guardian-symbol-enable{display:flex;align-items:center;gap:12px}
+
+.guardian-monitor-panel{border:1px solid #315c70;border-radius:16px;padding:10px;background:#06243c;box-shadow:0 18px 38px rgba(0,8,25,.12);margin-bottom:16px}
+.guardian-monitor-row{display:grid;grid-template-columns:64px minmax(220px,1fr) minmax(310px,1.05fr) 62px;gap:16px;align-items:center;min-height:102px;padding:10px 14px;border-bottom:1px solid rgba(115,188,211,.14)}
+.guardian-monitor-row:last-of-type{border-bottom:0}
+.guardian-monitor-row.disabled{opacity:.45}
+.guardian-rule-icon{width:56px;height:56px;display:grid;place-items:center;border-radius:12px;border:1px solid #2b627a;background:#082b45;color:#eaf7fb;font-size:20px;font-weight:900}
+.guardian-rule-copy h3{margin:0 0 7px;color:#f7fbfd;font-size:18px}
+.guardian-rule-copy p{margin:0;color:#9db8c5;font-size:12px}
+.guardian-live-state{min-height:68px;padding:11px 15px;display:flex;flex-direction:column;justify-content:center;border-radius:11px;border:1px solid #285872;background:#051c31}
+.guardian-live-state strong{font-size:22px;line-height:1.15}
+.guardian-live-state>span{margin-top:6px;color:#d3e3e9;font-size:13px}
+.guardian-live-state.good strong{color:#24d681}
+.guardian-live-state.warn strong{color:#ffd02c}
+.guardian-live-state.alert strong{color:#ff9d19}
+.guardian-live-state.danger strong{color:#ff4660}
+.guardian-live-state.muted strong{color:#899ca6}
+.guardian-live-state.neutral strong{color:#e9f5f8}
+.guardian-rsi-values{display:flex;align-items:center;gap:18px;margin-top:7px;color:#dce9ef}
+.guardian-rsi-values span{display:flex;gap:8px;align-items:baseline;font-size:14px}
+.guardian-rsi-values b{font-size:21px}
+.guardian-rsi-values b.good{color:#24d681}.guardian-rsi-values b.warn{color:#ffd02c}.guardian-rsi-values b.danger{color:#ff4660}.guardian-rsi-values b.muted{color:#899ca6}
+.guardian-rsi-values i{height:24px;width:1px;background:#466778}
+
+.guardian-status-legend{display:flex;flex-wrap:wrap;gap:22px;padding:11px 14px;margin-top:3px;border-radius:10px;background:#051c31;color:#cadce5;font-size:12px}
+.guardian-status-legend span{display:flex;align-items:center;gap:7px}
+.guardian-status-legend i{width:10px;height:10px;border-radius:50%}
+.guardian-status-legend i.good{background:#26c96d}.guardian-status-legend i.warn{background:#ffd023}.guardian-status-legend i.alert{background:#ff9814}.guardian-status-legend i.danger{background:#ff4057}.guardian-status-legend i.muted{background:#7d929d}
+
+.guardian-v2-history{margin-top:0}
+
+.main-deep .guardian-v2 .guardian-panel{background:#06243c!important;border-color:#315c70!important;color:#eef8fb!important}
+.main-deep .guardian-v2 .panel-heading h2{color:#fff!important}
+.main-deep .guardian-v2 .guardian-history p{color:#c2d6df!important}
+.main-deep .guardian-v2 .guardian-history article small{color:#83a4b3!important}
+.main-deep .guardian-v2 .history-tags span{background:#0a354d!important;border-color:#245c73!important;color:#bfe7ed!important}
+.main-deep .guardian-v2 .guardian-safety{background:#082f3d!important;border-color:#25735d!important;color:#bce9d6!important}
+
+@media(max-width:900px){
+  .guardian-monitor-row{grid-template-columns:54px 1fr 58px}
+  .guardian-live-state{grid-column:2/4}
+  .guardian-symbol-tabs{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .guardian-v2-master{margin-top:10px;flex-wrap:wrap}
+  .guardian-selected-monitor{align-items:flex-start;gap:14px}
+  .guardian-selected-monitor strong{font-size:22px}
+  .guardian-monitor-row{grid-template-columns:48px 1fr 52px;gap:10px;padding:10px 6px}
+  .guardian-rule-icon{width:46px;height:46px}
+  .guardian-rule-copy h3{font-size:15px}
+  .guardian-rule-copy p{font-size:10px}
+  .guardian-live-state{grid-column:1/4}
+}
+

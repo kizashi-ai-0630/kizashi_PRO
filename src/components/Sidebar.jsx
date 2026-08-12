@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTradeData } from '../context/TradeDataContext';
 import { useNotice } from '../context/NoticeContext';
 
-export const MENU = [['home','⌂','ホーム'],['live','📈','Live'],['brain','✦','今日の作戦'],['analysis','⌁','分析'],['coach','◎','AIコーチ'],['guardian','🛡','Guardian'],['growth','↗','成長'],['records','▣','記録'],['settings','⚙','管理'],['analytics','🔒','管理者']];
+export const MENU = [['home','⌂','ホーム'],['live','📈','LIVE'],['guardian','🛡','Guardian'],['brain','✦','今日の作戦'],['analysis','⌁','取引履歴の分析'],['coach','◎','AIコーチ'],['growth','↗','成長'],['records','▣','記録'],['settings','⚙','設定'],['analytics','🔒','管理者']];
 
 const GUIDE = {
   mt4: {

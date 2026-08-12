@@ -4,6 +4,11 @@ import { useNotice } from '../context/NoticeContext';
 
 export const MENU = [['home','⌂','ホーム'],['live','📈','LIVE'],['guardian','🛡','Guardian'],['brain','✦','今日の作戦'],['analysis','⌁','取引履歴の分析'],['coach','◎','AIコーチ'],['growth','↗','成長'],['records','▣','記録'],['settings','⚙','設定'],['analytics','🔒','管理者']];
 
+const MENU_GROUPS = [
+  { label: 'TRADE', ids: ['home', 'live', 'guardian', 'brain'] },
+  { label: 'MY DATA', ids: ['analysis', 'coach', 'growth', 'records', 'settings', 'analytics'] },
+];
+
 const GUIDE = {
   mt4: {
     title: 'MT4 詳細レポート（HTML）の取得方法',
@@ -58,7 +63,13 @@ export default function Sidebar({ page, go }) {
   return <>
     <aside className="sidebar">
       <div className="brand"><div className="logo">🌊</div><div className="word">KIZASHI</div><small>Trading Assistant</small></div>
-      <nav>{MENU.map(([id, icon, title]) => <button key={id} className={page === id ? 'active' : ''} onClick={() => go(id)}><span>{icon}</span>{title}</button>)}</nav>
+      <nav className="sidebar-grouped-nav">{MENU_GROUPS.map((group) => <section className="sidebar-menu-group" key={group.label}>
+        <div className="sidebar-group-title"><span>{group.label}</span></div>
+        <div className="sidebar-group-items">{group.ids.map((menuId) => {
+          const [id, icon, title] = MENU.find(([itemId]) => itemId === menuId);
+          return <button key={id} className={page === id ? 'active' : ''} onClick={() => go(id)}><span>{icon}</span>{title}</button>;
+        })}</div>
+      </section>)}</nav>
       <div className="csv">
         <b>取引履歴</b>
         <div className="csv-card">

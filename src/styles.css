@@ -3006,3 +3006,13 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
   margin-left:auto!important;
   margin-right:8px!important;
 }
+
+/* KIZASHI 13.13 — two-group vertical sidebar labels */
+.sidebar .sidebar-grouped-nav{display:grid;gap:10px}
+.sidebar .sidebar-menu-group{display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:4px;align-items:stretch}
+.sidebar .sidebar-group-title{display:flex;align-items:center;justify-content:center;border-right:1px solid rgba(99,221,233,.22);color:#63dce8;overflow:hidden}
+.sidebar .sidebar-group-title span{display:block;white-space:nowrap;font-size:9px;font-weight:900;letter-spacing:1.8px;line-height:1;transform:rotate(-90deg);opacity:.82}
+.sidebar .sidebar-group-items{display:grid;gap:4px;min-width:0}
+.sidebar .sidebar-group-items button{width:100%;min-width:0}
+.sidebar .sidebar-menu-group+ .sidebar-menu-group{padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
+@media(max-height:850px) and (min-width:761px){.sidebar .sidebar-grouped-nav{gap:5px}.sidebar .sidebar-menu-group{grid-template-columns:24px minmax(0,1fr)}.sidebar .sidebar-group-items{gap:2px}.sidebar .sidebar-menu-group+ .sidebar-menu-group{padding-top:5px}.sidebar .sidebar-group-title span{font-size:8px}}

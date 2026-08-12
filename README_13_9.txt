@@ -1,0 +1,1 @@
+Home market chart only: 32 sampled points; chart positioned below/right of price to avoid overlap; green up/red down.

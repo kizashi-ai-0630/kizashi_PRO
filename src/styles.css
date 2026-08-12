@@ -3000,3 +3000,9 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
 .main-home-polished .home-market-mini svg polyline{
   stroke-width:1.8!important;
 }
+
+/* KIZASHI 13.11 — align compact market sparklines slightly left */
+.main-home-polished .home-market-mini svg{
+  margin-left:auto!important;
+  margin-right:8px!important;
+}

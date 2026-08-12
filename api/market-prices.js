@@ -22,7 +22,7 @@ async function fetchYahoo(symbol) {
     .map(value => value == null ? NaN : Number(value))
     .filter(value => Number.isFinite(value) && value > 0);
 
-  const maxPoints = 28;
+  const maxPoints = 48;
   const step = Math.max(1, Math.floor(closes.length / maxPoints));
   const sampled = closes.filter((_, index) => index % step === 0);
   if (closes.length && sampled.at(-1) !== closes.at(-1)) sampled.push(closes.at(-1));
@@ -39,7 +39,7 @@ async function fetchYahoo(symbol) {
     previous,
     diff,
     percent,
-    history: sampled.slice(-28),
+    history: sampled.slice(-48),
   };
 }
 

@@ -2982,3 +2982,21 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
 }
 .main-home-polished .home-market-mini svg polyline.up{stroke:#16d59a!important}
 .main-home-polished .home-market-mini svg polyline.down{stroke:#ff4961!important}
+
+
+/* KIZASHI 13.10 — compact 28px home market sparklines */
+.main-home-polished .home-market-mini{
+  min-height:82px!important;
+}
+.main-home-polished .home-market-mini svg{
+  width:46%!important;
+  min-width:150px!important;
+  max-width:205px!important;
+  height:28px!important;
+  margin-left:auto!important;
+  margin-top:10px!important;
+  overflow:hidden!important;
+}
+.main-home-polished .home-market-mini svg polyline{
+  stroke-width:1.8!important;
+}

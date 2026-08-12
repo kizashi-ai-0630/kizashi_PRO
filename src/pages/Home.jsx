@@ -406,8 +406,8 @@ function sparklinePoints(values = []) {
 
   return clean.map((value, index) => {
     const v = Math.min(high, Math.max(low, value));
-    const x = index / (clean.length - 1) * 220;
-    const y = 54 - ((v - low) / (high - low)) * 46;
+    const x = index / (clean.length - 1) * 145;
+    const y = 32 - ((v - low) / (high - low)) * 28;
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
 }

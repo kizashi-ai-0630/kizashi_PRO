@@ -24,7 +24,7 @@ function visitorId() {
 function storeEvent(name, props) {
   try {
     const current = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
-    current.push({ name, props, at: new Date().toISOString() });
+    current.push({ name, props: { ...props, visitorId: visitorId() }, at: new Date().toISOString() });
     localStorage.setItem(STORE_KEY, JSON.stringify(current.slice(-MAX_LOCAL_EVENTS)));
     window.dispatchEvent(new CustomEvent('kizashi:analytics'));
   } catch { /* local analytics must never break the app */ }
@@ -58,7 +58,7 @@ export function initAnalytics() {
     addScript(`${host.replace(/\/$/, '')}/static/array.js`, 'posthog-script');
   }
 
-  trackEvent('app_open', { version: '10.0-analytics', path: location.hash || '#home' });
+  trackEvent('app_open', { version: '13.15-cloud-analytics', path: location.hash || '#home' });
 }
 
 export function trackEvent(name, props = {}) {

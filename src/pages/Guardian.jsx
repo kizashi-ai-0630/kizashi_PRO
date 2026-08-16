@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useGuardian } from '../context/GuardianContext';
+import { trackEvent } from '../utils/analytics';
 
 const AVAILABLE_SYMBOLS = [
   { key: 'USDJPY', label: 'USD/JPY' },
@@ -133,6 +134,10 @@ export default function Guardian() {
   const activeRules = rules.filter(rule => rule.enabled).length;
 
   useEffect(() => {
+    trackEvent('guardian_open', { symbol: selectedSymbol, active_rules: activeRules });
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     const load = async () => {
       try {
@@ -156,6 +161,24 @@ export default function Guardian() {
     rules.forEach(rule => {
       if (rule.enabled !== next) toggleRule(rule.id);
     });
+    trackEvent('guardian_rules_all', { enabled: next, symbol: selectedSymbol });
+  };
+
+  const toggleTrackedRule = rule => {
+    toggleRule(rule.id);
+    trackEvent('guardian_rule_toggle', {
+      rule: rule.id,
+      enabled: !rule.enabled,
+      symbol: selectedSymbol,
+    });
+  };
+
+  const toggleTrackedSymbol = () => {
+    toggleSymbol(selectedSymbol);
+    trackEvent('guardian_symbol_toggle', {
+      symbol: selectedSymbol,
+      enabled: !isSymbolEnabled,
+    });
   };
 
   return <div className="content guardian-page guardian-v2 page-enter">
@@ -177,7 +200,10 @@ export default function Guardian() {
         {AVAILABLE_SYMBOLS.map(symbol => <button
           key={symbol.key}
           className={selectedSymbol === symbol.key ? 'active' : ''}
-          onClick={() => setSelectedSymbol(symbol.key)}
+          onClick={() => {
+            setSelectedSymbol(symbol.key);
+            trackEvent('guardian_symbol_view', { symbol: symbol.key });
+          }}
         >{symbol.label}</button>)}
       </div>
       <div className="guardian-selected-monitor">
@@ -188,7 +214,7 @@ export default function Guardian() {
         </div>
         <div className="guardian-symbol-enable">
           <small>この通貨を監視</small>
-          <Toggle checked={isSymbolEnabled} onChange={() => toggleSymbol(selectedSymbol)} label={`${selectedMeta.label}監視切替`} />
+          <Toggle checked={isSymbolEnabled} onChange={toggleTrackedSymbol} label={`${selectedMeta.label}監視切替`} />
         </div>
       </div>
     </section>
@@ -212,7 +238,7 @@ export default function Guardian() {
             </div> : <span>{value.detail}</span>}
           </div>
 
-          <Toggle checked={rule.enabled} onChange={() => toggleRule(rule.id)} label={`${rule.label}切替`} />
+          <Toggle checked={rule.enabled} onChange={() => toggleTrackedRule(rule)} label={`${rule.label}切替`} />
         </article>;
       })}
 

@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { trackEvent } from '../utils/analytics';
 
 const MARKETS = [
   { symbol: 'OANDA:XAUUSD', label: 'XAU/USD', name: 'Gold' },
@@ -14,6 +15,11 @@ export default function Live(){
   const [market,setMarket]=useState(MARKETS[0]);
   const [interval,setInterval]=useState('15');
   const [dark,setDark]=useState(true);
+
+  useEffect(() => {
+    trackEvent('live_open', { symbol: market.label, interval });
+  }, []);
+
   const src=useMemo(()=>{
     const params=new URLSearchParams({
       symbol:market.symbol,
@@ -39,9 +45,16 @@ export default function Live(){
     </div>
 
     <section className="live-toolbar glass-panel">
-      <div className="market-tabs">{MARKETS.map(item=><button key={item.symbol} className={item.symbol===market.symbol?'active':''} onClick={()=>setMarket(item)}><b>{item.label}</b><small>{item.name}</small></button>)}</div>
+      <div className="market-tabs">{MARKETS.map(item=><button key={item.symbol} className={item.symbol===market.symbol?'active':''} onClick={()=>{
+        setMarket(item);
+        trackEvent('live_symbol_change', { symbol: item.label, interval });
+      }}><b>{item.label}</b><small>{item.name}</small></button>)}</div>
       <div className="live-controls">
-        <select value={interval} onChange={e=>setInterval(e.target.value)}>{INTERVALS.map(([value,label])=><option value={value} key={value}>{label}</option>)}</select>
+        <select value={interval} onChange={e=>{
+          const next = e.target.value;
+          setInterval(next);
+          trackEvent('live_interval_change', { symbol: market.label, interval: next });
+        }}>{INTERVALS.map(([value,label])=><option value={value} key={value}>{label}</option>)}</select>
         <button onClick={()=>setDark(v=>!v)}>{dark?'☀️ ライト':'🌙 ダーク'}</button>
         <button onClick={()=>window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(market.symbol)}`,'_blank','noopener,noreferrer')}>全画面 ↗</button>
       </div>

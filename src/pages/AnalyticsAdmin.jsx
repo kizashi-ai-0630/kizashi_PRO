@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import Page from '../components/Page';
 import { analyticsConfig, clearLocalAnalytics, getLocalAnalytics } from '../utils/analytics';
 
-const LABELS = { app_open:'起動', page_view:'ページ表示', trade_file_upload:'履歴読込', analysis_complete:'分析完了', ai_chat:'AIチャット', vision_analysis:'Vision解析', share_open:'シェア', feedback_send:'フィードバック' };
-const METRICS = ['users','app_open','ai_chat','vision_analysis','share_open','feedback_send','trade_file_upload','analysis_complete'];
+const LABELS = { app_open:'起動', page_view:'ページ表示', live_open:'LIVE表示', guardian_open:'Guardian表示', guardian_rule_toggle:'Guardian条件変更', guardian_symbol_toggle:'Guardian監視変更', trade_file_upload:'履歴読込', analysis_complete:'分析完了', ai_chat:'AIチャット', vision_analysis:'Vision解析', share_open:'シェア', feedback_send:'フィードバック' };
+const METRICS = ['users','app_open','live_open','guardian_open','ai_chat','vision_analysis','share_open','feedback_send','trade_file_upload','analysis_complete'];
 const dayKey = (iso) => new Date(iso).toISOString().slice(0, 10);
 const metric = (data, key) => Number(data?.totals?.[key] || 0);
 const format = (value) => Number(value || 0).toLocaleString('ja-JP');
@@ -78,8 +78,30 @@ export default function AnalyticsAdmin({ go }){
   const [remote,setRemote]=useState({ configured:false, source:'', totals:{}, users:0, daily:[], recent:[], today:{}, yesterday:{}, deltas:{}, growthScore:0 });
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState('');
+  const [cloudHealth,setCloudHealth]=useState({ connected:false, configured:false, source:'', checkedAt:'' });
   useEffect(()=>{const update=()=>setEvents(getLocalAnalytics());window.addEventListener('kizashi:analytics',update);return()=>window.removeEventListener('kizashi:analytics',update)},[]);
-  useEffect(()=>{let active=true;setLoading(true);setError('');fetch(`/api/analytics-summary?days=${range}`,{credentials:'include'}).then(async(r)=>{const d=await r.json();if(!r.ok)throw new Error(d.message||'取得に失敗しました');if(active)setRemote(d)}).catch(e=>active&&setError(e.message)).finally(()=>active&&setLoading(false));return()=>{active=false}},[range]);
+  useEffect(()=>{
+    let active=true;
+    let timer;
+    const load=async(showLoading=false)=>{
+      if(showLoading)setLoading(true);
+      setError('');
+      try{
+        const [summaryRes,healthRes]=await Promise.all([
+          fetch(`/api/analytics-summary?days=${range}`,{credentials:'include',cache:'no-store'}),
+          fetch('/api/analytics-health',{credentials:'include',cache:'no-store'})
+        ]);
+        const d=await summaryRes.json();
+        const h=await healthRes.json().catch(()=>({}));
+        if(!summaryRes.ok)throw new Error(d.message||'取得に失敗しました');
+        if(active){setRemote(d);setCloudHealth(h);}
+      }catch(e){if(active)setError(e.message)}
+      finally{if(active)setLoading(false)}
+    };
+    load(true);
+    timer=window.setInterval(()=>load(false),30000);
+    return()=>{active=false;window.clearInterval(timer)}
+  },[range]);
   const config=analyticsConfig();
   const localStats=useMemo(()=>{
     const today=new Date().toISOString().slice(0,10);
@@ -94,13 +116,13 @@ export default function AnalyticsAdmin({ go }){
       const uniqueVisitors = new Set(items.map((e)=>e.props?.visitorId).filter(Boolean));
       return { day, users: uniqueVisitors.size || (items.length?1:0), ...Object.fromEntries(METRICS.slice(1).map((name)=>[name,count(items,name)])) };
     });
-    const todayStats={ users:todays.length?1:0, app_open:count(todays,'app_open'), trade_file_upload:count(todays,'trade_file_upload'), analysis_complete:count(todays,'analysis_complete'), ai_chat:count(todays,'ai_chat'), vision_analysis:count(todays,'vision_analysis'), share_open:count(todays,'share_open'), feedback_send:count(todays,'feedback_send') };
-    const yesterdayStats={ users:yesterdays.length?1:0, app_open:count(yesterdays,'app_open'), ai_chat:count(yesterdays,'ai_chat'), vision_analysis:count(yesterdays,'vision_analysis'), share_open:count(yesterdays,'share_open'), feedback_send:count(yesterdays,'feedback_send') };
+    const todayStats={ users:todays.length?1:0, app_open:count(todays,'app_open'), live_open:count(todays,'live_open'), guardian_open:count(todays,'guardian_open'), trade_file_upload:count(todays,'trade_file_upload'), analysis_complete:count(todays,'analysis_complete'), ai_chat:count(todays,'ai_chat'), vision_analysis:count(todays,'vision_analysis'), share_open:count(todays,'share_open'), feedback_send:count(todays,'feedback_send') };
+    const yesterdayStats={ users:yesterdays.length?1:0, app_open:count(yesterdays,'app_open'), live_open:count(yesterdays,'live_open'), guardian_open:count(yesterdays,'guardian_open'), ai_chat:count(yesterdays,'ai_chat'), vision_analysis:count(yesterdays,'vision_analysis'), share_open:count(yesterdays,'share_open'), feedback_send:count(yesterdays,'feedback_send') };
     return {
       today:todayStats,
       yesterday:yesterdayStats,
-      deltas:Object.fromEntries(['users','app_open','ai_chat','vision_analysis','share_open','feedback_send'].map((key)=>[key,Number(todayStats[key]||0)-Number(yesterdayStats[key]||0)])),
-      total:{ opens:count(events,'app_open'), uploads:count(events,'trade_file_upload'), analyses:count(events,'analysis_complete'), chats:count(events,'ai_chat'), visions:count(events,'vision_analysis'), shares:count(events,'share_open'), feedback:count(events,'feedback_send') },
+      deltas:Object.fromEntries(['users','app_open','live_open','guardian_open','ai_chat','vision_analysis','share_open','feedback_send'].map((key)=>[key,Number(todayStats[key]||0)-Number(yesterdayStats[key]||0)])),
+      total:{ opens:count(events,'app_open'), live:count(events,'live_open'), guardian:count(events,'guardian_open'), uploads:count(events,'trade_file_upload'), analyses:count(events,'analysis_complete'), chats:count(events,'ai_chat'), visions:count(events,'vision_analysis'), shares:count(events,'share_open'), feedback:count(events,'feedback_send') },
       daily:grouped,
     };
   },[events,range]);
@@ -122,13 +144,13 @@ export default function AnalyticsAdmin({ go }){
       <label>表示期間<select value={range} onChange={(e)=>setRange(Number(e.target.value))}><option value="7">過去7日</option><option value="30">過去30日</option><option value="90">過去90日</option><option value="365">過去1年</option></select></label>
     </section>
 
-    {remote.configured ? <section className="analytics-connected"><b>✅ クラウド累計保存中</b><p>全ユーザーの累計・日別推移・昨日との差を保存しています。{remote.source?` 接続: ${remote.source}`:''}</p></section> : <section className="analytics-warning"><b>⚠ 全ユーザーの累計保存は未接続です</b><p>現在はこの端末に残っている全期間データを表示しています。VercelへUpstash Redisを接続すると、全端末の累計と過去推移が保存されます。</p></section>}
+    {remote.configured && cloudHealth.connected ? <section className="analytics-connected"><b>✅ クラウド累計保存・通信確認済み</b><p>全ユーザーのイベントをUpstash Redisへ保存しています。30秒ごとに自動更新します。{remote.source?` 接続: ${remote.source}`:''}</p></section> : remote.configured ? <section className="analytics-warning"><b>⚠ Redis設定は検出しましたが通信確認できません</b><p>環境変数はありますが、RedisへのPINGが成功していません。再デプロイ後も続く場合は接続設定を確認してください。</p></section> : <section className="analytics-warning"><b>⚠ 全ユーザーの累計保存は未接続です</b><p>現在はこの端末に残っている全期間データを表示しています。VercelへUpstash Redisを接続すると、全端末の累計と過去推移が保存されます。</p></section>}
     {error && <section className="analytics-warning"><b>取得エラー</b><p>{error}</p></section>}
 
     <div className="growth-top-grid">
       <article className="growth-score-card"><small>TODAY'S GROWTH SCORE</small><strong>{loading?'—':growthScore}</strong><span>/ 100</span><p>{growthScore>=80?'Excellent — 大きく成長しています。':growthScore>=50?'Good — 順調に前進しています。':growthScore>0?'Growing — 今日の行動が数字に出ています。':'今日の最初の一歩を記録しましょう。'}</p></article>
       <DailyGoals today={activeToday}/>
-      <div className="growth-today-deltas"><b>昨日との差</b><span>利用者 {deltaText(activeDeltas?.users)}</span><span>AI {deltaText(activeDeltas?.ai_chat)}</span><span>Vision {deltaText(activeDeltas?.vision_analysis)}</span><span>シェア {deltaText(activeDeltas?.share_open)}</span><span>意見 {deltaText(activeDeltas?.feedback_send)}</span></div>
+      <div className="growth-today-deltas"><b>昨日との差</b><span>利用者 {deltaText(activeDeltas?.users)}</span><span>LIVE {deltaText(activeDeltas?.live_open)}</span><span>Guardian {deltaText(activeDeltas?.guardian_open)}</span><span>AI {deltaText(activeDeltas?.ai_chat)}</span><span>Vision {deltaText(activeDeltas?.vision_analysis)}</span><span>シェア {deltaText(activeDeltas?.share_open)}</span><span>意見 {deltaText(activeDeltas?.feedback_send)}</span></div>
     </div>
 
     <div className="growth-kpis">
@@ -150,13 +172,15 @@ export default function AnalyticsAdmin({ go }){
       <section className="analytics-panel"><div className="panel-head"><div><small>HISTORY</small><h2>利用推移</h2></div><b>{format(dailyTotals)} 起動</b></div><TrendChart daily={activeDaily}/></section>
     </div>
 
+    <div className="analytics-kpis cloud-kpis"><article><small>全ユーザー 累計</small><strong>{remote.configured?format(remote.users):'—'}</strong><em>ユニーク利用者</em></article><article><small>LIVE 累計</small><strong>{remote.configured?format(metric(remote,'live_open')):'—'}</strong><em>全端末</em></article><article><small>Guardian 累計</small><strong>{remote.configured?format(metric(remote,'guardian_open')):'—'}</strong><em>全端末</em></article><article><small>AI 累計</small><strong>{remote.configured?format(metric(remote,'ai_chat')):'—'}</strong><em>全端末</em></article><article><small>Vision 累計</small><strong>{remote.configured?format(metric(remote,'vision_analysis')):'—'}</strong><em>全端末</em></article></div>
+
     <div className="analytics-kpis local-kpis"><article><small>この端末・累計起動</small><strong>{localStats.total.opens}</strong></article><article><small>履歴読込 累計</small><strong>{localStats.total.uploads}</strong></article><article><small>分析完了 累計</small><strong>{localStats.total.analyses}</strong></article><article><small>AIチャット 累計</small><strong>{localStats.total.chats}</strong></article><article><small>Vision 累計</small><strong>{localStats.total.visions}</strong></article></div>
 
     <div className="analytics-grid"><section className="analytics-panel"><h2>日別履歴</h2><div className="growth-history"><div className="growth-history-head"><span>日付</span><span>利用者</span><span>起動</span><span>AI</span><span>Vision</span><span>シェア</span></div>{activeDaily.slice().reverse().map(item=><div key={item.day}><b>{item.day}</b><span>{item.users||0}</span><span>{item.app_open||0}</span><span>{item.ai_chat||0}</span><span>{item.vision_analysis||0}</span><span>{item.share_open||0}</span></div>)}</div></section>
       <section className="analytics-panel"><h2>直近イベント</h2><div className="analytics-feed">{(remote.recent.length?remote.recent:events.slice(-20).reverse()).slice(0,20).map((e,i)=><div key={`${e.at}-${i}`}><span>{LABELS[e.name]||e.name}</span><small>{new Date(e.at).toLocaleString('ja-JP')}</small></div>)}</div><button className="danger" onClick={()=>{if(confirm('この端末の計測履歴を消去しますか？')){clearLocalAnalytics();setEvents([])}}}>この端末の履歴を消去</button></section>
     </div>
 
-    <section className="analytics-config-card"><div><small>TRACKING STATUS</small><h2>計測サービス接続状況</h2></div><div className="analytics-status-list"><span className={remote.configured?'on':'off'}>累計データベース <b>{remote.configured?`接続済み${remote.source?` (${remote.source})`:''}`:'未設定'}</b></span><span className={config.vercel?'on':'off'}>Vercel Analytics <b>{config.vercel?'導入済み':'停止'}</b></span><span className={config.ga4?'on':'off'}>Google Analytics 4 <b>{config.ga4?'接続済み':'ID未設定'}</b></span><span className={config.posthog?'on':'off'}>PostHog <b>{config.posthog?'接続済み':'キー未設定'}</b></span></div></section>
+    <section className="analytics-config-card"><div><small>TRACKING STATUS</small><h2>計測サービス接続状況</h2></div><div className="analytics-status-list"><span className={cloudHealth.connected?'on':'off'}>累計データベース <b>{cloudHealth.connected?`通信OK${cloudHealth.source?` (${cloudHealth.source})`:''}`:remote.configured?'設定あり・通信待ち':'未設定'}</b></span><span className={config.vercel?'on':'off'}>Vercel Analytics <b>{config.vercel?'導入済み':'停止'}</b></span><span className={config.ga4?'on':'off'}>Google Analytics 4 <b>{config.ga4?'接続済み':'ID未設定'}</b></span><span className={config.posthog?'on':'off'}>PostHog <b>{config.posthog?'接続済み':'キー未設定'}</b></span></div></section>
     <section className="analytics-panel analytics-setup"><h2>累計保存を有効にする設定</h2><p>Vercel MarketplaceでUpstash Redisを接続すると、環境変数は自動設定されます。手動設定の場合は次の2つを登録してください。</p><code>UPSTASH_REDIS_REST_URL=https://...</code><code>UPSTASH_REDIS_REST_TOKEN=...</code><p><b>Vercel KV形式（KV_REST_API_URL / KV_REST_API_TOKEN）にも対応済み。</b> 設定後に再デプロイすると、全ユーザーの累計・過去履歴・昨日との差が保存されます。</p></section>
   </Page>;
 }

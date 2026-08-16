@@ -10,8 +10,12 @@ function firstEnv(...names) {
 
 function redisConfig() {
   // Upstash integration can expose either the native names or Vercel KV names.
-  const urlEnv = firstEnv('UPSTASH_REDIS_REST_URL', 'KV_REST_API_URL', 'KV_URL');
-  const tokenEnv = firstEnv('UPSTASH_REDIS_REST_TOKEN', 'KV_REST_API_TOKEN', 'KV_REST_API_READ_ONLY_TOKEN');
+  // Vercel's Upstash integration currently exposes KV_REST_API_URL /
+  // KV_REST_API_TOKEN. Native Upstash env names are also supported.
+  // Do not use KV_URL/REDIS_URL here because those are Redis protocol URLs,
+  // while this module talks to the Upstash REST /pipeline endpoint.
+  const urlEnv = firstEnv('KV_REST_API_URL', 'UPSTASH_REDIS_REST_URL');
+  const tokenEnv = firstEnv('KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_TOKEN');
   const url = urlEnv.value.replace(/\/$/, '');
   const token = tokenEnv.value;
   return {

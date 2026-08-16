@@ -62,7 +62,7 @@ export default async function handler(req, res) {
     }));
     const today = daily[daily.length - 1] || {};
     const yesterday = daily[daily.length - 2] || {};
-    const tracked = ['users', 'app_open', 'ai_chat', 'vision_analysis', 'share_open', 'feedback_send', 'trade_file_upload', 'analysis_complete'];
+    const tracked = ['users', 'app_open', 'live_open', 'guardian_open', 'ai_chat', 'vision_analysis', 'share_open', 'feedback_send', 'trade_file_upload', 'analysis_complete'];
     const deltas = Object.fromEntries(tracked.map((key) => [key, Number(today[key] || 0) - Number(yesterday[key] || 0)]));
     return sendJson(res, 200, { configured: true, source: store.source, totals, users, daily, recent, today, yesterday, deltas, growthScore: growthScore(today, yesterday) });
   } catch (error) {

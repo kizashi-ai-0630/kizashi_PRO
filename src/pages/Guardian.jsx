@@ -4,7 +4,7 @@ import { trackEvent } from '../utils/analytics';
 
 const AVAILABLE_SYMBOLS = [
   { key: 'USDJPY', label: 'USD/JPY' },
-  { key: 'EURJPY', label: 'EUR/JPY' },
+  { key: 'EURUSD', label: 'EUR/USD' },
   { key: 'GBPJPY', label: 'GBP/JPY' },
   { key: 'XAUUSD', label: 'XAU/USD' },
 ];
@@ -193,12 +193,12 @@ export default function Guardian() {
       <div className="guardian-v2-master">
         <span>{activeRules}/{rules.length}</span>
         <button
-          className={`bulk-button bulk-on ${allRulesOn ? 'selected' : ''}`}
+          className={`bulk-button bulk-on ${allRulesOn ? 'is-active' : 'is-inactive'}`}
           aria-pressed={allRulesOn}
           onClick={() => setAllRules(true)}
         >一括ON</button>
         <button
-          className={`bulk-button bulk-off ${allRulesOff ? 'selected' : ''}`}
+          className={`bulk-button bulk-off ${allRulesOff ? 'is-active' : 'is-inactive'}`}
           aria-pressed={allRulesOff}
           onClick={() => setAllRules(false)}
         >一括OFF</button>

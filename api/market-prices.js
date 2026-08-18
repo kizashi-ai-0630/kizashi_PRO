@@ -1,6 +1,7 @@
 const SYMBOLS = [
   { key: 'USDJPY', yahoo: 'USDJPY=X' },
   { key: 'EURJPY', yahoo: 'EURJPY=X' },
+  { key: 'EURUSD', yahoo: 'EURUSD=X' },
   { key: 'GBPJPY', yahoo: 'GBPJPY=X' },
   { key: 'XAUUSD', yahoo: 'XAUUSD=X', fallbackYahoo: 'GC=F' },
 ];

@@ -4,7 +4,7 @@ import { trackEvent } from '../utils/analytics';
 const MARKETS = [
   { symbol: 'OANDA:XAUUSD', label: 'XAU/USD', name: 'Gold' },
   { symbol: 'FX:USDJPY', label: 'USD/JPY', name: 'Dollar / Yen' },
-  { symbol: 'FX:EURUSD', label: 'EUR/USD', name: 'Euro / Dollar' },
+  { symbol: 'FX:EURJPY', label: 'EUR/JPY', name: 'Euro / Yen' },
   { symbol: 'FX:GBPJPY', label: 'GBP/JPY', name: 'Pound / Yen' },
 ];
 const INTERVALS = [

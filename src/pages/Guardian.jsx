@@ -132,6 +132,8 @@ export default function Guardian() {
   const [selectedSymbol, setSelectedSymbol] = useState(() => symbols[0] || 'USDJPY');
   const [markets, setMarkets] = useState([]);
   const activeRules = rules.filter(rule => rule.enabled).length;
+  const allRulesOn = rules.length > 0 && activeRules === rules.length;
+  const allRulesOff = activeRules === 0;
 
   useEffect(() => {
     trackEvent('guardian_open', { symbol: selectedSymbol, active_rules: activeRules });
@@ -190,8 +192,16 @@ export default function Guardian() {
       </div>
       <div className="guardian-v2-master">
         <span>{activeRules}/{rules.length}</span>
-        <button onClick={() => setAllRules(true)}>一括ON</button>
-        <button className="off" onClick={() => setAllRules(false)}>一括OFF</button>
+        <button
+          className={`bulk-button bulk-on ${allRulesOn ? 'selected' : ''}`}
+          aria-pressed={allRulesOn}
+          onClick={() => setAllRules(true)}
+        >一括ON</button>
+        <button
+          className={`bulk-button bulk-off ${allRulesOff ? 'selected' : ''}`}
+          aria-pressed={allRulesOff}
+          onClick={() => setAllRules(false)}
+        >一括OFF</button>
       </div>
     </div>
 

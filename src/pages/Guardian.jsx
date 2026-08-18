@@ -195,11 +195,13 @@ export default function Guardian() {
         <button
           className={`bulk-button bulk-on ${allRulesOn ? 'is-active' : 'is-inactive'}`}
           aria-pressed={allRulesOn}
+          data-state={allRulesOn ? 'active' : 'inactive'}
           onClick={() => setAllRules(true)}
         >一括ON</button>
         <button
           className={`bulk-button bulk-off ${allRulesOff ? 'is-active' : 'is-inactive'}`}
           aria-pressed={allRulesOff}
+          data-state={allRulesOff ? 'active' : 'inactive'}
           onClick={() => setAllRules(false)}
         >一括OFF</button>
       </div>

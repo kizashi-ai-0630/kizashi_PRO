@@ -3118,3 +3118,37 @@ button,select,input,textarea{min-height:var(--rc-control-h)}
 .guardian-v2-master .bulk-off.is-inactive{background:#082942!important}
 .guardian-v2-master .bulk-on.is-active,
 .guardian-v2-master .bulk-off.is-active{background:linear-gradient(120deg,#22cbd3,#12aebd)!important}
+
+/* =========================================================
+   KIZASHI 13.18 — Guardian final bulk-state + EUR/USD fix
+   ========================================================= */
+.guardian-v2-master .bulk-button{
+  background:#082942!important;
+  color:#dceaf0!important;
+  border-color:#31566b!important;
+  box-shadow:none!important;
+  opacity:1!important;
+}
+.guardian-v2-master .bulk-button[data-state="inactive"]{
+  background:#082942!important;
+  color:#dceaf0!important;
+  border-color:#31566b!important;
+  box-shadow:none!important;
+}
+.guardian-v2-master .bulk-button[data-state="active"]{
+  background:linear-gradient(120deg,#22cbd3,#12aebd)!important;
+  color:#fff!important;
+  border-color:#66e9ee!important;
+  box-shadow:0 7px 20px rgba(18,190,201,.24)!important;
+  position:relative!important;
+  z-index:5!important;
+}
+.guardian-v2-master .bulk-on[data-state="inactive"],
+.guardian-v2-master .bulk-off[data-state="inactive"]{
+  background:#082942!important;
+}
+.guardian-v2-master .bulk-on[data-state="active"],
+.guardian-v2-master .bulk-off[data-state="active"]{
+  background:linear-gradient(120deg,#22cbd3,#12aebd)!important;
+}
+

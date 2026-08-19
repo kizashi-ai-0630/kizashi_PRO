@@ -58,7 +58,7 @@ export function initAnalytics() {
     addScript(`${host.replace(/\/$/, '')}/static/array.js`, 'posthog-script');
   }
 
-  trackEvent('app_open', { version: '13.15-cloud-analytics', path: location.hash || '#home' });
+  trackEvent('app_open', { version: '13.21-unique-user-analytics', path: location.hash || '#home' });
 }
 
 export function trackEvent(name, props = {}) {

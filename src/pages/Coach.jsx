@@ -67,6 +67,16 @@ export default function Coach() {
   const fileInput = useRef(null);
 
   useEffect(() => {
+    try {
+      if (sessionStorage.getItem('kizashi_open_vision') === '1') {
+        sessionStorage.removeItem('kizashi_open_vision');
+        setActiveRoute('vision');
+        setQuestion('チャート画像をアップロードして分析');
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
     const pendingPrompt = sessionStorage.getItem('kizashi_pending_prompt');
     if (!pendingPrompt) return;
     sessionStorage.removeItem('kizashi_pending_prompt');

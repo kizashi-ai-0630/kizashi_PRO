@@ -4,7 +4,7 @@ import { trackEvent } from '../utils/analytics';
 
 const AVAILABLE_SYMBOLS = [
   { key: 'USDJPY', label: 'USD/JPY' },
-  { key: 'EURUSD', label: 'EUR/USD' },
+  { key: 'EURJPY', label: 'EUR/JPY' },
   { key: 'GBPJPY', label: 'GBP/JPY' },
   { key: 'XAUUSD', label: 'XAU/USD' },
 ];

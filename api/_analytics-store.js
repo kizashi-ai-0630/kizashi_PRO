@@ -58,6 +58,12 @@ export function analyticsKeys(day) {
     daily: `${PREFIX}:day:${day}`,
     dailyUsers: `${PREFIX}:day:${day}:users`,
     recent: `${PREFIX}:recent`,
+    visitorOpens: `${PREFIX}:visitor-opens`,
+    repeatUsers: `${PREFIX}:repeat-users`,
+    dailyRepeatUsers: `${PREFIX}:day:${day}:repeat-users`,
+    dailyNewUsers: `${PREFIX}:day:${day}:new-users`,
+    eventUsers: (event) => `${PREFIX}:event:${event}:users`,
+    dailyEventUsers: (event) => `${PREFIX}:day:${day}:event:${event}:users`,
   };
 }
 

@@ -497,63 +497,125 @@ function MarketSnapshotStrip() {
   </section>;
 }
 
-export default function Home({ go }) {
-  const { metrics, rows, intelligence } = useTradeData();
-  const ready = rows.length > 0;
-  const scoreDelta = useScoreHistory(intelligence.score, ready);
-  return <div className="home daily-home page-enter">
-    <section className="kizashi-home-hero">
-  <div className="kizashi-home-hero-art" aria-hidden="true"/>
-  <div className="kizashi-home-hero-overlay" aria-hidden="true"/>
 
-  <div className="kizashi-home-copy">
-    <small>KIZASHI · AI TRADING ASSISTANT</small>
-    <h1>迷いを、<br/>確信へ。</h1>
-    <h2>深海の静けさで、相場を見る。</h2>
-    <p>データとAIで、あなたのトレードを整理し、<br/>次の判断へつなげます。</p>
 
-    <div className="kizashi-home-actions">
-      <button className="primary" onClick={() => go('live')}>LIVE MARKET ↗</button>
-      <button className="secondary" onClick={() => go('coach')}>きざしくんに相談</button>
-    </div>
+const HOME_HERO_SLIDES = [
+  {
+    kicker: 'KIZASHI · TRADING ASSISTANT',
+    title: '迷いを、確信へ。',
+    body: 'データとAIで、次の判断をもっとシンプルに。',
+    action: 'KIZASHIを使う',
+    target: 'brain',
+    image: '/assets/kizashi-whale-hero-clean.png',
+  },
+  {
+    kicker: 'LIVE MARKET',
+    title: '相場の今を、ひとつの画面で。',
+    body: 'リアルタイムチャートを見ながら、市場の流れを確認。',
+    action: 'LIVEを開く',
+    target: 'live',
+    image: '/assets/ocean.jpg',
+  },
+  {
+    kicker: 'GUARDIAN',
+    title: '見るべき瞬間を、見逃さない。',
+    body: 'MA・ATR・RSI・市場環境をひと目でチェック。',
+    action: 'Guardianを開く',
+    target: 'guardian',
+    image: '/assets/kizashi-opening-cinematic.png',
+  },
+  {
+    kicker: 'AI COACH · VISION',
+    title: '振り返りが、次の判断になる。',
+    body: '取引履歴やチャート画像をAIと一緒に整理。',
+    action: 'AIコーチを開く',
+    target: 'coach',
+    image: '/assets/kizashi-v11-concept.png',
+  },
+];
 
-    <div className="kizashi-home-data-state">
-      <i className={ready ? 'ready' : ''}/>
-      {ready ? `${metrics.count}件の取引データを読み込み中` : '取引データを待っています'}
-    </div>
-  </div>
+const HOME_ROOMS = [
+  { title: 'LIVE', body: 'リアルタイムチャートで市場を見る', target: 'live' },
+  { title: 'Guardian', body: '相場環境をひと目で確認', target: 'guardian' },
+  { title: '今日の作戦', body: '今日のトレード戦略を整理', target: 'brain' },
+  { title: '取引履歴の分析', body: '取引履歴から自分のクセを発見', target: 'analysis' },
+  { title: 'AI Coach', body: 'AIと一緒にトレードを振り返る', target: 'coach' },
+  { title: 'Vision', body: 'チャート画像をAIが読み解く', target: 'vision' },
+  { title: '成長・記録', body: 'トレードの変化と成長を残す', target: 'growth' },
+  { title: 'KIZASHI LAB', body: 'オリジナルEA・インジケーター', target: 'lab', disabled: true },
+];
 
-  <aside className="kizashi-home-side">
-    <TradeImportCard go={go} compact/>
-    <div className="daily-score kizashi-home-score">
-      <small>KIZASHI SCORE</small>
-      <div className="kizashi-home-score-inner">
-        <div>
-          <strong>{ready ? intelligence.score : '—'}</strong>
-          <span className={`daily-score-delta ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : ''}`}>
-            {scoreDelta == null ? '今日から記録開始' : scoreDelta === 0 ? '昨日と同じ' : `${scoreDelta > 0 ? '↑ +' : '↓ '}${scoreDelta} · 昨日比`}
-          </span>
+function HomeSlideHero({ go }) {
+  const [index, setIndex] = useState(0);
+  const touchStart = useRef(null);
+  useEffect(() => {
+    const timer = window.setInterval(() => setIndex(current => (current + 1) % HOME_HERO_SLIDES.length), 6000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const move = (direction) => setIndex(current => (current + direction + HOME_HERO_SLIDES.length) % HOME_HERO_SLIDES.length);
+  const onTouchStart = (event) => { touchStart.current = event.touches?.[0]?.clientX ?? null; };
+  const onTouchEnd = (event) => {
+    if (touchStart.current == null) return;
+    const end = event.changedTouches?.[0]?.clientX ?? touchStart.current;
+    const diff = end - touchStart.current;
+    if (Math.abs(diff) > 45) move(diff > 0 ? -1 : 1);
+    touchStart.current = null;
+  };
+
+  return <section className="home-slide-hero" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <div className="home-slide-track" style={{ transform: `translateX(-${index * 100}%)` }}>
+      {HOME_HERO_SLIDES.map((slide) => <article className="home-slide" key={slide.kicker} style={{ '--hero-image': `url(${slide.image})` }}>
+        <div className="home-slide-shade"/>
+        <div className="home-slide-copy">
+          <small>{slide.kicker}</small>
+          <h1>{slide.title}</h1>
+          <p>{slide.body}</p>
+          <button onClick={() => go(slide.target)}>{slide.action} <span>→</span></button>
         </div>
-        <div className="kizashi-home-score-orb" aria-hidden="true"/>
-      </div>
+      </article>)}
     </div>
-  </aside>
+    <button className="home-slide-arrow prev" onClick={() => move(-1)} aria-label="前のスライド">‹</button>
+    <button className="home-slide-arrow next" onClick={() => move(1)} aria-label="次のスライド">›</button>
+    <div className="home-slide-dots">{HOME_HERO_SLIDES.map((slide, dot) => <button key={slide.kicker} className={dot === index ? 'active' : ''} onClick={() => setIndex(dot)} aria-label={`${dot + 1}枚目`}/>)}</div>
+  </section>;
+}
 
-  <div className="kizashi-home-whale-signal">
-    <small>WHALE SIGNAL</small>
-    <b>迷いを、確信へ。</b>
-  </div>
-</section>
+function HomeRooms({ go }) {
+  const openRoom = (room) => {
+    if (room.disabled) return;
+    if (room.target === 'vision') {
+      try { sessionStorage.setItem('kizashi_open_vision', '1'); } catch {}
+      trackEvent('vision_room_open', { source: 'home_rooms' });
+      go('coach');
+      return;
+    }
+    trackEvent('home_room_open', { room: room.target });
+    go(room.target);
+  };
+  return <section className="home-rooms-section">
+    <div className="home-rooms-head"><div><small>KIZASHI ROOMS</small><h2>あなたのトレードを支える8つの部屋</h2></div></div>
+    <div className="home-rooms-grid">{HOME_ROOMS.map(room => <button key={room.title} className={`home-room ${room.disabled ? 'disabled' : ''}`} onClick={() => openRoom(room)} disabled={room.disabled}>
+      <div><strong>{room.title}</strong>{room.disabled && <em>COMING SOON</em>}</div>
+      <p>{room.body}</p>
+      {!room.disabled && <span>›</span>}
+    </button>)}</div>
+  </section>;
+}
 
-    <TodayMission ready={ready} go={go}/><MarketSnapshotStrip/>
+function HomeFooter({ go }) {
+  return <footer className="home-footer">
+    <button onClick={() => go('home')}><b>KIZASHI</b><small>Trading Assistant</small></button>
+    <p>迷いを、確信へ。</p>
+    <span>© 2026 KIZASHI</span>
+  </footer>;
+}
 
-    <div className="daily-main-grid">
-      <GuardianFocus go={go}/>
-      <MarketClock/>
-    </div>
-
-    {ready && <DailyBrief metrics={metrics} ready={ready} score={intelligence.score}/>}
-    {ready && <Kpis metrics={metrics}/>}
-    <QuickActions go={go}/>
+export default function Home({ go }) {
+  return <div className="home home-v14 page-enter">
+    <HomeSlideHero go={go}/>
+    <MarketSnapshotStrip/>
+    <HomeRooms go={go}/>
+    <HomeFooter go={go}/>
   </div>;
 }

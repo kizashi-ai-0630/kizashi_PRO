@@ -10,11 +10,11 @@ const format = (value) => Number(value || 0).toLocaleString('ja-JP');
 const deltaText = (value) => `${Number(value || 0) >= 0 ? '+' : ''}${format(value)}`;
 
 const DAILY_GOALS = [
-  { key:'users', label:'βユーザー', goal:2, icon:'👤' },
-  { key:'ai_chat', label:'AI利用', goal:10, icon:'🤖' },
-  { key:'vision_analysis', label:'Vision', goal:3, icon:'📷' },
-  { key:'feedback_send', label:'Feedback', goal:1, icon:'💬' },
-  { key:'share_open', label:'Share', goal:5, icon:'🚀' },
+  { key:'new_users', label:'新規ユーザー', goal:2, icon:'👤' },
+  { key:'ai_chat_users', label:'AI利用者', goal:3, icon:'🤖' },
+  { key:'vision_analysis_users', label:'Vision利用者', goal:2, icon:'📷' },
+  { key:'feedback_send_users', label:'Feedback送信者', goal:1, icon:'💬' },
+  { key:'share_open_users', label:'Share利用者', goal:2, icon:'🚀' },
 ];
 
 function Progress({ label, value, goal }) {
@@ -35,10 +35,10 @@ function TrendChart({ daily }) {
   const rows = daily.slice(-30);
   const series = [
     { key:'users', label:'利用者', className:'users' },
-    { key:'app_open', label:'起動', className:'opens' },
-    { key:'ai_chat', label:'AI', className:'ai' },
-    { key:'vision_analysis', label:'Vision', className:'vision' },
-    { key:'share_open', label:'シェア', className:'share' },
+    { key:'new_users', label:'新規', className:'opens' },
+    { key:'ai_chat_users', label:'AI利用者', className:'ai' },
+    { key:'vision_analysis_users', label:'Vision利用者', className:'vision' },
+    { key:'guardian_open_users', label:'Guardian利用者', className:'share' },
   ];
   const allValues = series.flatMap((item) => rows.map((row) => Number(row[item.key] || 0)));
   const maxValue = Math.max(1, ...allValues);
@@ -75,7 +75,7 @@ function DailyGoals({ today }) {
 export default function AnalyticsAdmin({ go }){
   const [events,setEvents]=useState(getLocalAnalytics);
   const [range,setRange]=useState(30);
-  const [remote,setRemote]=useState({ configured:false, source:'', totals:{}, users:0, daily:[], recent:[], today:{}, yesterday:{}, deltas:{}, growthScore:0 });
+  const [remote,setRemote]=useState({ configured:false, source:'', totals:{}, users:0, repeatUsers:0, unique:{}, access:{ total:0,admin:0,external:0 }, daily:[], recent:[], today:{}, yesterday:{}, deltas:{}, growthScore:0 });
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState('');
   const [cloudHealth,setCloudHealth]=useState({ connected:false, configured:false, source:'', checkedAt:'' });
@@ -131,7 +131,7 @@ export default function AnalyticsAdmin({ go }){
   const activeDaily = remote.configured ? remote.daily : localStats.daily;
   const calculateLocalScore = () => {
     const ratio = (key,goal,weight) => Math.min(weight,(Number(activeToday?.[key]||0)/goal)*weight);
-    return Math.round(ratio('users',2,25)+ratio('ai_chat',10,25)+ratio('vision_analysis',3,20)+ratio('share_open',5,15)+ratio('feedback_send',1,15));
+    return Math.round(ratio('users',2,30)+ratio('ai_chat',5,25)+ratio('vision_analysis',2,20)+ratio('share_open',2,15)+ratio('feedback_send',1,10));
   };
   const growthScore = remote.configured ? remote.growthScore : calculateLocalScore();
   const dailyTotals=useMemo(()=>activeDaily.reduce((sum,item)=>sum+Number(item.app_open||0),0),[activeDaily]);
@@ -140,7 +140,7 @@ export default function AnalyticsAdmin({ go }){
     <div className="analytics-owner-bar"><span>🔐 管理者としてログイン中</span><button onClick={logout}>ログアウト</button></div>
 
     <section className="growth-hero">
-      <div><small>KIZASHI GROWTH</small><h2>サービス成長の司令塔</h2><p>累計・過去推移・目標達成率を一つの画面で確認します。</p></div>
+      <div><small>KIZASHI GROWTH</small><h2>サービス成長の司令塔</h2><p>ユニークユーザー・外部アクセス・機能利用者を一つの画面で確認します。</p></div>
       <label>表示期間<select value={range} onChange={(e)=>setRange(Number(e.target.value))}><option value="7">過去7日</option><option value="30">過去30日</option><option value="90">過去90日</option><option value="365">過去1年</option></select></label>
     </section>
 
@@ -150,33 +150,42 @@ export default function AnalyticsAdmin({ go }){
     <div className="growth-top-grid">
       <article className="growth-score-card"><small>TODAY'S GROWTH SCORE</small><strong>{loading?'—':growthScore}</strong><span>/ 100</span><p>{growthScore>=80?'Excellent — 大きく成長しています。':growthScore>=50?'Good — 順調に前進しています。':growthScore>0?'Growing — 今日の行動が数字に出ています。':'今日の最初の一歩を記録しましょう。'}</p></article>
       <DailyGoals today={activeToday}/>
-      <div className="growth-today-deltas"><b>昨日との差</b><span>利用者 {deltaText(activeDeltas?.users)}</span><span>LIVE {deltaText(activeDeltas?.live_open)}</span><span>Guardian {deltaText(activeDeltas?.guardian_open)}</span><span>AI {deltaText(activeDeltas?.ai_chat)}</span><span>Vision {deltaText(activeDeltas?.vision_analysis)}</span><span>シェア {deltaText(activeDeltas?.share_open)}</span><span>意見 {deltaText(activeDeltas?.feedback_send)}</span></div>
+      <div className="growth-today-deltas"><b>昨日との差（ユニーク）</b><span>利用者 {deltaText(activeDeltas?.users)}</span><span>新規 {deltaText(activeDeltas?.new_users)}</span><span>LIVE {deltaText(activeDeltas?.live_open_users)}</span><span>Guardian {deltaText(activeDeltas?.guardian_open_users)}</span><span>AI {deltaText(activeDeltas?.ai_chat_users)}</span><span>Vision {deltaText(activeDeltas?.vision_analysis_users)}</span></div>
     </div>
 
-    <div className="growth-kpis">
-      <article><small>βユーザー</small><strong>{loading?'—':remote.configured?format(remote.users):(events.length?1:0)}</strong><span>/ 100</span><em>{remote.configured?`今日 ${deltaText(activeDeltas?.users)}`:'この端末'}</em></article>
-      <article><small>AI利用 累計</small><strong>{loading?'—':format(remote.configured?metric(remote,'ai_chat'):localStats.total.chats)}</strong><em>今日 {format(activeToday?.ai_chat)}</em></article>
-      <article><small>Vision利用 累計</small><strong>{loading?'—':format(remote.configured?metric(remote,'vision_analysis'):localStats.total.visions)}</strong><em>今日 {format(activeToday?.vision_analysis)}</em></article>
-      <article><small>シェア 累計</small><strong>{loading?'—':format(remote.configured?metric(remote,'share_open'):localStats.total.shares)}</strong><em>今日 {format(activeToday?.share_open)}</em></article>
-      <article><small>フィードバック 累計</small><strong>{loading?'—':format(remote.configured?metric(remote,'feedback_send'):localStats.total.feedback)}</strong><em>今日 {format(activeToday?.feedback_send)}</em></article>
+    <div className="growth-kpis unique-user-kpis">
+      <article><small>累計ユーザー</small><strong>{loading?'—':remote.configured?format(remote.users):(events.length?1:0)}</strong><span>/ 100</span><em>ユニーク</em></article>
+      <article><small>今日の新規</small><strong>{loading?'—':format(activeToday?.new_users ?? activeToday?.users)}</strong><em>新しく来た人</em></article>
+      <article><small>リピーター</small><strong>{loading?'—':remote.configured?format(remote.repeatUsers):'—'}</strong><em>2回以上起動</em></article>
+      <article><small>LIVE利用ユーザー</small><strong>{loading?'—':remote.configured?format(remote.unique?.live_open):'—'}</strong><em>ユニーク</em></article>
+      <article><small>Guardian利用ユーザー</small><strong>{loading?'—':remote.configured?format(remote.unique?.guardian_open):'—'}</strong><em>ユニーク</em></article>
+      <article><small>AIコーチ利用ユーザー</small><strong>{loading?'—':remote.configured?format(remote.unique?.ai_chat):'—'}</strong><em>ユニーク</em></article>
+      <article><small>Vision利用ユーザー</small><strong>{loading?'—':remote.configured?format(remote.unique?.vision_analysis):'—'}</strong><em>ユニーク</em></article>
     </div>
+
+    <section className="analytics-panel access-breakdown">
+      <div className="panel-head"><div><small>ACCESS BREAKDOWN</small><h2>アクセス内訳</h2></div><b>管理者ログイン中のアクセスを分離</b></div>
+      <div className="access-breakdown-grid">
+        <article><small>総アクセス</small><strong>{format(remote.access?.total)}</strong><span>全app_open</span></article>
+        <article><small>管理者アクセス</small><strong>{format(remote.access?.admin)}</strong><span>みずぴ管理者ログイン中</span></article>
+        <article><small>外部アクセス</small><strong>{format(remote.access?.external)}</strong><span>総アクセス − 管理者</span></article>
+      </div>
+      <p className="analytics-footnote">※ 管理者アクセスは管理者ログインCookieが有効なブラウザでの起動を分類します。ユニーク利用者は同じ端末の更新を重複カウントしません。</p>
+    </section>
 
     <div className="growth-layout">
       <section className="analytics-panel growth-goal-panel"><div className="panel-head"><div><small>GOAL PROGRESS</small><h2>β版の目標</h2></div></div>
         <Progress label="βユーザー" value={remote.configured?remote.users:(events.length?1:0)} goal={100}/>
-        <Progress label="AI利用" value={remote.configured?metric(remote,'ai_chat'):localStats.total.chats} goal={1000}/>
-        <Progress label="Vision利用" value={remote.configured?metric(remote,'vision_analysis'):localStats.total.visions} goal={100}/>
-        <Progress label="フィードバック" value={remote.configured?metric(remote,'feedback_send'):localStats.total.feedback} goal={50}/>
-        <Progress label="シェア" value={remote.configured?metric(remote,'share_open'):localStats.total.shares} goal={100}/>
+        <Progress label="AI利用ユーザー" value={remote.configured?Number(remote.unique?.ai_chat||0):0} goal={50}/>
+        <Progress label="Vision利用ユーザー" value={remote.configured?Number(remote.unique?.vision_analysis||0):0} goal={30}/>
+        <Progress label="フィードバック送信者" value={remote.configured?Number(remote.unique?.feedback_send||0):0} goal={20}/>
+        <Progress label="シェア利用ユーザー" value={remote.configured?Number(remote.unique?.share_open||0):0} goal={30}/>
       </section>
-      <section className="analytics-panel"><div className="panel-head"><div><small>HISTORY</small><h2>利用推移</h2></div><b>{format(dailyTotals)} 起動</b></div><TrendChart daily={activeDaily}/></section>
+      <section className="analytics-panel"><div className="panel-head"><div><small>HISTORY</small><h2>ユニーク利用推移</h2></div><b>{format(remote.users)} 累計ユーザー</b></div><TrendChart daily={activeDaily}/></section>
     </div>
 
-    <div className="analytics-kpis cloud-kpis"><article><small>全ユーザー 累計</small><strong>{remote.configured?format(remote.users):'—'}</strong><em>ユニーク利用者</em></article><article><small>LIVE 累計</small><strong>{remote.configured?format(metric(remote,'live_open')):'—'}</strong><em>全端末</em></article><article><small>Guardian 累計</small><strong>{remote.configured?format(metric(remote,'guardian_open')):'—'}</strong><em>全端末</em></article><article><small>AI 累計</small><strong>{remote.configured?format(metric(remote,'ai_chat')):'—'}</strong><em>全端末</em></article><article><small>Vision 累計</small><strong>{remote.configured?format(metric(remote,'vision_analysis')):'—'}</strong><em>全端末</em></article></div>
 
-    <div className="analytics-kpis local-kpis"><article><small>この端末・累計起動</small><strong>{localStats.total.opens}</strong></article><article><small>履歴読込 累計</small><strong>{localStats.total.uploads}</strong></article><article><small>分析完了 累計</small><strong>{localStats.total.analyses}</strong></article><article><small>AIチャット 累計</small><strong>{localStats.total.chats}</strong></article><article><small>Vision 累計</small><strong>{localStats.total.visions}</strong></article></div>
-
-    <div className="analytics-grid"><section className="analytics-panel"><h2>日別履歴</h2><div className="growth-history"><div className="growth-history-head"><span>日付</span><span>利用者</span><span>起動</span><span>AI</span><span>Vision</span><span>シェア</span></div>{activeDaily.slice().reverse().map(item=><div key={item.day}><b>{item.day}</b><span>{item.users||0}</span><span>{item.app_open||0}</span><span>{item.ai_chat||0}</span><span>{item.vision_analysis||0}</span><span>{item.share_open||0}</span></div>)}</div></section>
+    <div className="analytics-grid"><section className="analytics-panel"><h2>日別履歴</h2><div className="growth-history"><div className="growth-history-head unique-history-head"><span>日付</span><span>利用者</span><span>新規</span><span>LIVE</span><span>Guardian</span><span>AI</span></div>{activeDaily.slice().reverse().map(item=><div className="unique-history-row" key={item.day}><b>{item.day}</b><span>{item.users||0}</span><span>{item.new_users||0}</span><span>{item.live_open_users||0}</span><span>{item.guardian_open_users||0}</span><span>{item.ai_chat_users||0}</span></div>)}</div></section>
       <section className="analytics-panel"><h2>直近イベント</h2><div className="analytics-feed">{(remote.recent.length?remote.recent:events.slice(-20).reverse()).slice(0,20).map((e,i)=><div key={`${e.at}-${i}`}><span>{LABELS[e.name]||e.name}</span><small>{new Date(e.at).toLocaleString('ja-JP')}</small></div>)}</div><button className="danger" onClick={()=>{if(confirm('この端末の計測履歴を消去しますか？')){clearLocalAnalytics();setEvents([])}}}>この端末の履歴を消去</button></section>
     </div>
 

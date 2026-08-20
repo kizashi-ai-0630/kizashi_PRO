@@ -3841,19 +3841,59 @@ html,body{overflow-x:hidden}
   border-radius:50%!important;
   background:#4cdeeb!important;
 }
-/* KIZASHI 14.4 — CSS-only hero worlds */
-.main-home-polished .home-v14 .home-slide{background-image:none!important;overflow:hidden!important}
-.main-home-polished .home-v14 .home-slide::before,.main-home-polished .home-v14 .home-slide::after{content:"";position:absolute;inset:0;pointer-events:none}
-.main-home-polished .home-v14 .home-slide.theme-live{background:radial-gradient(circle at 72% 18%,rgba(150,230,255,.46),transparent 26%),linear-gradient(180deg,#082442 0%,#0b5277 47%,#083149 48%,#041b2d 100%)!important}
-.main-home-polished .home-v14 .home-slide.theme-live::before{background:repeating-linear-gradient(170deg,transparent 0 28px,rgba(95,210,238,.10) 29px 33px,transparent 34px 54px),radial-gradient(ellipse at 70% 84%,transparent 0 33%,rgba(58,181,216,.22) 34% 37%,transparent 38%)}
-.main-home-polished .home-v14 .home-slide.theme-live::after{background:linear-gradient(90deg,rgba(2,15,30,.86) 0%,rgba(2,24,41,.42) 48%,rgba(2,18,32,.08) 100%)!important}
-.main-home-polished .home-v14 .home-slide.theme-guardian{background:radial-gradient(circle at 76% 22%,rgba(34,220,198,.20),transparent 24%),linear-gradient(180deg,#031827 0%,#064154 52%,#02131f 100%)!important}
-.main-home-polished .home-v14 .home-slide.theme-guardian::before{background:linear-gradient(180deg,transparent 0 54%,rgba(1,11,18,.92) 54% 100%),repeating-linear-gradient(90deg,transparent 0 36px,rgba(20,175,166,.34) 37px 40px,rgba(4,34,44,.96) 41px 66px);clip-path:polygon(46% 100%,46% 58%,50% 58%,50% 43%,55% 43%,55% 66%,60% 66%,60% 34%,64% 34%,64% 59%,69% 59%,69% 48%,73% 48%,73% 70%,79% 70%,79% 42%,84% 42%,84% 100%)}
-.main-home-polished .home-v14 .home-slide.theme-guardian::after{background:linear-gradient(90deg,rgba(0,12,24,.90) 0%,rgba(0,28,40,.48) 48%,rgba(0,14,25,.10) 100%)!important}
-.main-home-polished .home-v14 .home-slide.theme-coach{background:radial-gradient(circle at 74% 50%,rgba(119,91,255,.58) 0 3%,rgba(70,82,210,.20) 10%,transparent 28%),repeating-radial-gradient(circle at 74% 50%,transparent 0 30px,rgba(139,118,255,.10) 31px 32px,transparent 33px 54px),linear-gradient(180deg,#061126 0%,#0a1c3a 52%,#040d1f 100%)!important}
-.main-home-polished .home-v14 .home-slide.theme-coach::after{background:linear-gradient(90deg,rgba(4,10,25,.92) 0%,rgba(10,18,42,.52) 48%,rgba(13,14,45,.08) 100%)!important}
-.main-home-polished .home-v14 .home-slide.theme-vision{background:radial-gradient(circle at 75% 16%,rgba(142,228,255,.34),transparent 24%),repeating-linear-gradient(0deg,rgba(77,191,225,.05) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,rgba(77,191,225,.05) 0 1px,transparent 1px 42px),linear-gradient(180deg,#041629 0%,#07344d 52%,#031524 100%)!important}
-.main-home-polished .home-v14 .home-slide.theme-vision::after{background:linear-gradient(90deg,rgba(2,14,28,.90) 0%,rgba(4,28,45,.48) 48%,rgba(3,28,47,.08) 100%)!important}
-.main-home-polished .home-v14 .home-slide-copy{position:relative;z-index:4!important}
-.main-home-polished .home-v14 .home-slide-arrow,.main-home-polished .home-v14 .home-slide-dots{z-index:5!important}
+
+
+/* =========================================================
+   KIZASHI 14.5 — Replaceable hero images
+   To change a hero later, replace only the matching file:
+   /public/assets/hero-live.jpg
+   /public/assets/hero-guardian.png
+   /public/assets/hero-coach.png
+   /public/assets/hero-vision.png
+   ========================================================= */
+
+.main-home-polished .home-v14 .home-slide{
+  position:relative!important;
+  background-image:var(--hero-image)!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+
+/* Approx. 50% dark overlay. Image remains visible; copy/buttons stay full opacity. */
+.main-home-polished .home-v14 .home-slide .home-slide-shade{
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  background:rgba(2,15,30,.50)!important;
+  opacity:1!important;
+  pointer-events:none!important;
+}
+
+/* Remove the decorative pseudo-backgrounds from the previous hero-world experiment. */
+.main-home-polished .home-v14 .home-slide::before,
+.main-home-polished .home-v14 .home-slide::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+
+/* Copy and CTA are deliberately not transparent. */
+.main-home-polished .home-v14 .home-slide-copy{
+  position:relative!important;
+  z-index:2!important;
+  opacity:1!important;
+}
+.main-home-polished .home-v14 .home-slide-copy button{
+  position:relative!important;
+  z-index:3!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+
+/* Keep carousel controls above the overlay. */
+.main-home-polished .home-v14 .home-slide-arrow,
+.main-home-polished .home-v14 .home-slide-dots{
+  z-index:4!important;
+}
 

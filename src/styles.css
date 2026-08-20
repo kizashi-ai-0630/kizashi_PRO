@@ -3518,3 +3518,155 @@ html,body{overflow-x:hidden}
   .main-home-polished .home-v14 .home-footer p{display:none}
   .main-home-polished .home-v14 .home-footer>span{font-size:7px}
 }
+
+
+/* =========================================================
+   KIZASHI 14.1 — Home carousel refinement
+   Reference target:
+   - smaller perfectly centered arrow controls
+   - active pagination dot cyan, inactive dots small circles
+   - hero nearly edge-to-edge inside content area
+   - room cards expanded 4px toward both sides
+   ========================================================= */
+
+/* Hero: expand horizontally while preserving the existing page shell. */
+.home-portal .home-hero,
+.home-page .home-hero,
+.home-hero,
+.hero-carousel,
+.home-carousel{
+  width:calc(100% + 8px)!important;
+  max-width:none!important;
+  margin-left:-4px!important;
+  margin-right:-4px!important;
+}
+
+/* Smaller left/right carousel controls with centered glyphs. */
+.home-hero-arrow,
+.hero-arrow,
+.hero-nav-small,
+.home-carousel-arrow{
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  min-height:38px!important;
+  border-radius:50%!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  line-height:1!important;
+  font-size:21px!important;
+  text-align:center!important;
+}
+.home-hero-arrow svg,
+.hero-arrow svg,
+.home-carousel-arrow svg{
+  width:17px!important;
+  height:17px!important;
+  display:block!important;
+  margin:auto!important;
+}
+
+/* Carousel dots: active = cyan filled circle, inactive = small outlined circles. */
+.home-hero-dots,
+.hero-dots,
+.carousel-dots,
+.home-carousel-dots{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+}
+.home-hero-dots button,
+.hero-dots button,
+.carousel-dots button,
+.home-carousel-dots button{
+  width:9px!important;
+  height:9px!important;
+  min-width:9px!important;
+  min-height:9px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  border:1.5px solid rgba(255,255,255,.72)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.home-hero-dots button.active,
+.home-hero-dots button[aria-current="true"],
+.hero-dots button.active,
+.hero-dots button[aria-current="true"],
+.carousel-dots button.active,
+.carousel-dots button[aria-current="true"],
+.home-carousel-dots button.active,
+.home-carousel-dots button[aria-current="true"]{
+  width:11px!important;
+  height:11px!important;
+  min-width:11px!important;
+  min-height:11px!important;
+  background:#25d7e2!important;
+  border-color:#25d7e2!important;
+}
+
+/* Room grid: enlarge by 4px on each side, keep existing 4x2 / 2x4 layout. */
+.kizashi-rooms,
+.home-rooms,
+.rooms-grid,
+.home-room-grid{
+  width:calc(100% + 8px)!important;
+  max-width:none!important;
+  margin-left:-4px!important;
+  margin-right:-4px!important;
+}
+
+/* Mobile: keep everything inside viewport. */
+@media(max-width:700px){
+  .home-portal .home-hero,
+  .home-page .home-hero,
+  .home-hero,
+  .hero-carousel,
+  .home-carousel,
+  .kizashi-rooms,
+  .home-rooms,
+  .rooms-grid,
+  .home-room-grid{
+    width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+
+  .home-hero-arrow,
+  .hero-arrow,
+  .home-carousel-arrow{
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    min-height:34px!important;
+    font-size:19px!important;
+  }
+
+  .home-hero-dots button,
+  .hero-dots button,
+  .carousel-dots button,
+  .home-carousel-dots button{
+    width:7px!important;
+    height:7px!important;
+    min-width:7px!important;
+    min-height:7px!important;
+  }
+
+  .home-hero-dots button.active,
+  .home-hero-dots button[aria-current="true"],
+  .hero-dots button.active,
+  .hero-dots button[aria-current="true"],
+  .carousel-dots button.active,
+  .carousel-dots button[aria-current="true"],
+  .home-carousel-dots button.active,
+  .home-carousel-dots button[aria-current="true"]{
+    width:9px!important;
+    height:9px!important;
+    min-width:9px!important;
+    min-height:9px!important;
+  }
+}
+

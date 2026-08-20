@@ -3897,3 +3897,34 @@ html,body{overflow-x:hidden}
   z-index:4!important;
 }
 
+
+/* =========================================================
+   KIZASHI 14.6 — Embedded hero artwork
+   The four generated hero panels are now real local image files.
+   ========================================================= */
+
+/* Show the artwork clearly. Since the generated artwork already includes
+   its own title/copy/button design, hide the duplicate HTML hero copy. */
+.main-home-polished .home-v14 .home-slide{
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+.main-home-polished .home-v14 .home-slide .home-slide-shade{
+  background:rgba(2,15,30,.12)!important;
+}
+.main-home-polished .home-v14 .home-slide-copy{
+  display:none!important;
+}
+
+/* Keep the carousel itself interactive. */
+.main-home-polished .home-v14 .home-slide-arrow,
+.main-home-polished .home-v14 .home-slide-dots{
+  z-index:4!important;
+}
+
+/* Entire slide acts as a visual panel; no duplicate CTA is drawn over the art. */
+.main-home-polished .home-v14 .home-slide{
+  cursor:default!important;
+}
+

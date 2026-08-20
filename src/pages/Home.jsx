@@ -516,7 +516,7 @@ const HOME_HERO_SLIDES = [
     body: '相場環境をひと目で確認。',
     action: 'Guardianを開く',
     target: 'guardian',
-    image: '/assets/hero-guardian.png',
+    image: '/assets/hero-guardian.jpg',
   },
   {
     theme: 'coach',
@@ -525,7 +525,7 @@ const HOME_HERO_SLIDES = [
     body: '取引履歴から次の改善点を整理。',
     action: 'AI Coachを開く',
     target: 'coach',
-    image: '/assets/hero-coach.png',
+    image: '/assets/hero-coach.jpg',
   },
   {
     theme: 'vision',
@@ -534,7 +534,7 @@ const HOME_HERO_SLIDES = [
     body: '画像から相場の状態を整理。',
     action: 'Visionを開く',
     target: 'vision',
-    image: '/assets/hero-vision.png',
+    image: '/assets/hero-vision.jpg',
   },
 ];
 

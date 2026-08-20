@@ -507,7 +507,7 @@ const HOME_HERO_SLIDES = [
     body: 'リアルタイムチャートを見ながら、市場の流れを確認。',
     action: 'LIVEを開く',
     target: 'live',
-    image: '/assets/ocean.jpg',
+    image: 'none',
   },
   {
     theme: 'guardian',
@@ -516,7 +516,7 @@ const HOME_HERO_SLIDES = [
     body: '設定した条件を監視し、変化を見逃さない。',
     action: 'Guardianを開く',
     target: 'guardian',
-    image: '/assets/kizashi-opening-cinematic.png',
+    image: 'none',
   },
   {
     theme: 'coach',
@@ -525,7 +525,7 @@ const HOME_HERO_SLIDES = [
     body: 'あなたの取引を整理し、次の一手を一緒に考える。',
     action: 'AI Coachを開く',
     target: 'coach',
-    image: '/assets/kizashi-v11-concept.png',
+    image: 'none',
   },
   {
     theme: 'vision',
@@ -534,7 +534,7 @@ const HOME_HERO_SLIDES = [
     body: 'チャートをアップロードし、AIの視点で分析する。',
     action: 'Visionを開く',
     target: 'vision',
-    image: '/assets/kizashi-whale-dashboard-reference.png',
+    image: 'none',
   },
 ];
 

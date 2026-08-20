@@ -3755,3 +3755,90 @@ html,body{overflow-x:hidden}
   }
 }
 
+
+/* =========================================================
+   KIZASHI 14.3 — Hero Worlds
+   Selected direction: option 1 for LIVE / Guardian / AI Coach / Vision
+   No new image assets are required.
+   ========================================================= */
+
+/* Give each world its own readable atmospheric treatment while reusing
+   existing KIZASHI assets. */
+.main-home-polished .home-v14 .home-slide::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+}
+.main-home-polished .home-v14 .home-slide-copy{
+  position:relative;
+  z-index:3;
+}
+.main-home-polished .home-v14 .home-slide-shade{
+  z-index:2;
+}
+
+/* LIVE — open ocean / market motion */
+.main-home-polished .home-v14 .home-slide.theme-live::after{
+  background:
+    radial-gradient(circle at 76% 20%,rgba(96,218,255,.18),transparent 28%),
+    linear-gradient(90deg,rgba(1,17,34,.76) 0%,rgba(3,24,43,.38) 46%,rgba(1,18,34,.12) 100%);
+}
+
+/* Guardian — deep-sea city / protective sentinel */
+.main-home-polished .home-v14 .home-slide.theme-guardian::after{
+  background:
+    radial-gradient(circle at 74% 42%,rgba(24,222,199,.14),transparent 28%),
+    linear-gradient(90deg,rgba(0,18,34,.82) 0%,rgba(0,37,54,.46) 48%,rgba(0,12,28,.30) 100%);
+}
+.main-home-polished .home-v14 .home-slide.theme-guardian .home-slide-copy small,
+.main-home-polished .home-v14 .home-slide.theme-guardian .home-slide-copy button{
+  --hero-accent:#27d8be;
+}
+
+/* AI Coach — calm deep-sea intelligence */
+.main-home-polished .home-v14 .home-slide.theme-coach::after{
+  background:
+    radial-gradient(circle at 72% 42%,rgba(130,91,255,.17),transparent 30%),
+    linear-gradient(90deg,rgba(3,14,36,.84) 0%,rgba(12,30,66,.48) 48%,rgba(7,12,38,.28) 100%);
+}
+.main-home-polished .home-v14 .home-slide.theme-coach .home-slide-copy small{
+  color:#bda8ff!important;
+}
+.main-home-polished .home-v14 .home-slide.theme-coach .home-slide-copy button{
+  background:linear-gradient(120deg,#7258e8,#4e8cff)!important;
+}
+
+/* Vision — shafts of light / visual analysis */
+.main-home-polished .home-v14 .home-slide.theme-vision::after{
+  background:
+    linear-gradient(115deg,rgba(74,190,255,.11),transparent 32%),
+    radial-gradient(circle at 72% 18%,rgba(173,232,255,.18),transparent 26%),
+    linear-gradient(90deg,rgba(1,17,35,.82) 0%,rgba(3,31,54,.40) 50%,rgba(0,16,32,.22) 100%);
+}
+.main-home-polished .home-v14 .home-slide.theme-vision .home-slide-copy small{
+  color:#6edbff!important;
+}
+
+/* Keep the chosen compact carousel controls from 14.2. */
+.main-home-polished .home-v14 .home-slide-dots button{
+  width:7px!important;
+  height:7px!important;
+  min-width:7px!important;
+  min-height:7px!important;
+  max-width:7px!important;
+  max-height:7px!important;
+  border-radius:50%!important;
+}
+.main-home-polished .home-v14 .home-slide-dots button.active{
+  width:10px!important;
+  height:10px!important;
+  min-width:10px!important;
+  min-height:10px!important;
+  max-width:10px!important;
+  max-height:10px!important;
+  border-radius:50%!important;
+  background:#4cdeeb!important;
+}
+

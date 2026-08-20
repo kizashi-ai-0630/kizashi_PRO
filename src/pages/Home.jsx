@@ -141,7 +141,7 @@ function useScoreHistory(score, ready) {
 const HOME_MARKETS = [
   { symbol: 'OANDA:XAUUSD', label: 'XAU/USD' },
   { symbol: 'FX:USDJPY', label: 'USD/JPY' },
-  { symbol: 'FX:EURUSD', label: 'EUR/USD' },
+  { symbol: 'FX:EURJPY', label: 'EUR/JPY' },
   { symbol: 'FX:GBPJPY', label: 'GBP/JPY' },
 ];
 const HOME_INTERVALS = [['1','1m'],['5','5m'],['15','15m'],['60','1H'],['240','4H'],['D','1D']];
@@ -501,14 +501,7 @@ function MarketSnapshotStrip() {
 
 const HOME_HERO_SLIDES = [
   {
-    kicker: 'KIZASHI · TRADING ASSISTANT',
-    title: '迷いを、確信へ。',
-    body: 'データとAIで、次の判断をもっとシンプルに。',
-    action: 'KIZASHIを使う',
-    target: 'brain',
-    image: '/assets/kizashi-whale-hero-clean.png',
-  },
-  {
+    theme: 'live',
     kicker: 'LIVE MARKET',
     title: '相場の今を、ひとつの画面で。',
     body: 'リアルタイムチャートを見ながら、市場の流れを確認。',
@@ -517,20 +510,31 @@ const HOME_HERO_SLIDES = [
     image: '/assets/ocean.jpg',
   },
   {
+    theme: 'guardian',
     kicker: 'GUARDIAN',
-    title: '見るべき瞬間を、見逃さない。',
-    body: 'MA・ATR・RSI・市場環境をひと目でチェック。',
+    title: '相場を、静かに見守る。',
+    body: '設定した条件を監視し、変化を見逃さない。',
     action: 'Guardianを開く',
     target: 'guardian',
     image: '/assets/kizashi-opening-cinematic.png',
   },
   {
-    kicker: 'AI COACH · VISION',
-    title: '振り返りが、次の判断になる。',
-    body: '取引履歴やチャート画像をAIと一緒に整理。',
-    action: 'AIコーチを開く',
+    theme: 'coach',
+    kicker: 'AI COACH',
+    title: 'AIと一緒に、トレードを振り返る。',
+    body: 'あなたの取引を整理し、次の一手を一緒に考える。',
+    action: 'AI Coachを開く',
     target: 'coach',
     image: '/assets/kizashi-v11-concept.png',
+  },
+  {
+    theme: 'vision',
+    kicker: 'VISION',
+    title: 'チャート画像を、AIが読み解く。',
+    body: 'チャートをアップロードし、AIの視点で分析する。',
+    action: 'Visionを開く',
+    target: 'vision',
+    image: '/assets/kizashi-whale-dashboard-reference.png',
   },
 ];
 
@@ -565,13 +569,22 @@ function HomeSlideHero({ go }) {
 
   return <section className="home-slide-hero" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
     <div className="home-slide-track" style={{ transform: `translateX(-${index * 100}%)` }}>
-      {HOME_HERO_SLIDES.map((slide) => <article className="home-slide" key={slide.kicker} style={{ '--hero-image': `url(${slide.image})` }}>
+      {HOME_HERO_SLIDES.map((slide) => <article className={`home-slide theme-${slide.theme}`} key={slide.kicker} style={{ '--hero-image': `url(${slide.image})` }}>
         <div className="home-slide-shade"/>
         <div className="home-slide-copy">
           <small>{slide.kicker}</small>
           <h1>{slide.title}</h1>
           <p>{slide.body}</p>
-          <button onClick={() => go(slide.target)}>{slide.action} <span>→</span></button>
+          <button onClick={() => {
+            if (slide.target === 'vision') {
+              try { sessionStorage.setItem('kizashi_open_vision', '1'); } catch {}
+              trackEvent('vision_hero_open', { source: 'home_hero' });
+              go('coach');
+              return;
+            }
+            trackEvent('home_hero_open', { target: slide.target });
+            go(slide.target);
+          }}>{slide.action} <span>→</span></button>
         </div>
       </article>)}
     </div>

@@ -3670,3 +3670,88 @@ html,body{overflow-x:hidden}
   }
 }
 
+
+/* =========================================================
+   KIZASHI 14.2 — EXACT Home hero controls
+   Actual JSX selectors:
+   .home-slide-arrow
+   .home-slide-dots
+   .home-slide-hero
+   ========================================================= */
+
+.main-home-polished .home-v14 .home-slide-arrow{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  min-height:34px!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:50%!important;
+  font-size:22px!important;
+  line-height:34px!important;
+  text-indent:0!important;
+  font-family:Arial,sans-serif!important;
+}
+.main-home-polished .home-v14 .home-slide-arrow.prev{left:12px!important}
+.main-home-polished .home-v14 .home-slide-arrow.next{right:12px!important}
+
+/* All pagination marks are true circles. */
+.main-home-polished .home-v14 .home-slide-dots{
+  bottom:12px!important;
+  gap:8px!important;
+  align-items:center!important;
+}
+.main-home-polished .home-v14 .home-slide-dots button{
+  box-sizing:border-box!important;
+  width:7px!important;
+  height:7px!important;
+  min-width:7px!important;
+  min-height:7px!important;
+  max-width:7px!important;
+  max-height:7px!important;
+  padding:0!important;
+  margin:0!important;
+  border:1px solid rgba(255,255,255,.72)!important;
+  border-radius:50%!important;
+  background:rgba(255,255,255,.34)!important;
+  transform:none!important;
+}
+.main-home-polished .home-v14 .home-slide-dots button.active{
+  width:10px!important;
+  height:10px!important;
+  min-width:10px!important;
+  min-height:10px!important;
+  max-width:10px!important;
+  max-height:10px!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:#4cdeeb!important;
+}
+
+/* Requested desktop expansion: 4px on each edge. */
+@media(min-width:621px){
+  .main-home-polished .home-v14 .home-slide-hero,
+  .main-home-polished .home-v14 .home-market-strip,
+  .main-home-polished .home-v14 .home-rooms-section{
+    width:calc(100% + 8px)!important;
+    margin-left:-4px!important;
+    margin-right:-4px!important;
+  }
+}
+
+/* Mobile keeps the viewport safe and uses swipe instead of side arrows. */
+@media(max-width:620px){
+  .main-home-polished .home-v14 .home-slide-hero,
+  .main-home-polished .home-v14 .home-market-strip,
+  .main-home-polished .home-v14 .home-rooms-section{
+    width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+  .main-home-polished .home-v14 .home-slide-dots{
+    bottom:9px!important;
+  }
+}
+

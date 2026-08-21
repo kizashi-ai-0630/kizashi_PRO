@@ -44,7 +44,7 @@ const routeLabel = {
   chat: '💬 雑談', analysis: '📊 分析', strategy: '🎯 作戦', vision: '🖼 Vision', memory: '🧠 Memory', risk: '🛡 Risk'
 };
 
-export default function Coach() {
+export default function Coach({ visionMode = false }) {
   const { rows, metrics, diagnosis, intelligence } = useTradeData();
   const { apiKey, hasApiKey } = useApiKey();
   const [messages, setMessages] = useState(() => loadJson(CHAT_KEY, []));
@@ -62,11 +62,16 @@ export default function Coach() {
   const [loading, setLoading] = useState(false);
   const [connection, setConnection] = useState({ checked: false, connected: false, model: '' });
   const [imageError, setImageError] = useState('');
-  const [activeRoute, setActiveRoute] = useState('chat');
+  const [activeRoute, setActiveRoute] = useState(visionMode ? 'vision' : 'chat');
   const messageEnd = useRef(null);
   const fileInput = useRef(null);
 
   useEffect(() => {
+    if (visionMode) {
+      setActiveRoute('vision');
+      setQuestion('チャート画像をアップロードして分析');
+      return;
+    }
     try {
       if (sessionStorage.getItem('kizashi_open_vision') === '1') {
         sessionStorage.removeItem('kizashi_open_vision');
@@ -74,7 +79,7 @@ export default function Coach() {
         setQuestion('チャート画像をアップロードして分析');
       }
     } catch {}
-  }, []);
+  }, [visionMode]);
 
   useEffect(() => {
     const pendingPrompt = sessionStorage.getItem('kizashi_pending_prompt');
@@ -164,13 +169,13 @@ export default function Coach() {
   const clearVision = () => setVisionCache(null);
   const prompts = ['このチャートを分析して', '今日は取引していい？', '前と同じミスしてる？', '勝率とPFから作戦を作って', '今の弱点を一つだけ'];
 
-  return <Page title="AIコーチ" sub="Smart Routerで必要な情報だけを使う、速く安定した専属コーチ">
+  return <Page title={visionMode ? "Vision" : "AIコーチ"} sub={visionMode ? "チャート画像をAIが読み解く" : "Smart Routerで必要な情報だけを使う、速く安定した専属コーチ"}>
     <div className="ai-coach-header dark-card">
       <div><small>KIZASHI 9.12 · BYOK BETA</small><h2>{intelligence.headline}</h2></div>
       <div><span>AI接続</span><strong className={connection.connected ? 'connected-text' : 'offline-text'}>{connection.connected ? 'ON' : 'OFF'}</strong><small>{connection.connected ? connection.model : 'ローカル予備モード'}</small></div>
     </div>
     <div className="v91-badges"><span>⚡ Smart Router</span><span>🔁 自動リトライ</span><span>🖼 Vision Cache</span><span>{routeLabel[activeRoute]}</span></div>
-    {!hasApiKey && <div className="ai-key-gate"><div><b>🤖 AIコーチ</b><h3>OpenAI APIキーを設定するとAI分析が利用できます。</h3><p>分析・記録・Guardianはそのまま利用できます。</p></div><button onClick={()=>{location.hash='settings'}}>APIキーを設定</button></div>}
+    {!hasApiKey && <div className="ai-key-gate"><div><b>{visionMode ? "🖼 Vision" : "🤖 AIコーチ"}</b><h3>OpenAI APIキーを設定するとAI分析が利用できます。</h3><p>分析・記録・Guardianはそのまま利用できます。</p></div><button onClick={()=>{location.hash='settings'}}>APIキーを設定</button></div>}
     {hasApiKey && !connection.connected && connection.checked && <div className="connection-note">🔑 APIキーは保存されています。管理画面の「接続確認」で状態を確認してください。</div>}
     <div className="quick-prompts">{prompts.map((p) => <button key={p} onClick={() => send(p)} disabled={loading || !hasApiKey}>{p}</button>)}</div>
     <div className="coach-layout enhanced">

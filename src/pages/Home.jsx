@@ -577,9 +577,8 @@ function HomeSlideHero({ go }) {
           <p>{slide.body}</p>
           <button onClick={() => {
             if (slide.target === 'vision') {
-              try { sessionStorage.setItem('kizashi_open_vision', '1'); } catch {}
               trackEvent('vision_hero_open', { source: 'home_hero' });
-              go('coach');
+              go('vision');
               return;
             }
             trackEvent('home_hero_open', { target: slide.target });
@@ -598,9 +597,8 @@ function HomeRooms({ go }) {
   const openRoom = (room) => {
     if (room.disabled) return;
     if (room.target === 'vision') {
-      try { sessionStorage.setItem('kizashi_open_vision', '1'); } catch {}
       trackEvent('vision_room_open', { source: 'home_rooms' });
-      go('coach');
+      go('vision');
       return;
     }
     trackEvent('home_room_open', { room: room.target });

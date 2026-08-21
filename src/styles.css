@@ -3950,3 +3950,38 @@ html,body{overflow-x:hidden}
   }
 }
 
+
+/* KIZASHI 14.8 — widen the window, NOT the artwork */
+@media (min-width: 621px){
+  .main-home-polished .home-v14{
+    width:calc(100% - 8px)!important;
+    max-width:none!important;
+    margin-left:4px!important;
+    margin-right:4px!important;
+  }
+  .main-home-polished .home-v14 .home-slide-hero{
+    width:100%!important;
+    max-width:none!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    background:#031426!important;
+  }
+  .main-home-polished .home-v14 .home-slide{
+    background-size:contain!important;
+    background-position:center center!important;
+    background-repeat:no-repeat!important;
+    background-color:#031426!important;
+  }
+  .main-home-polished .home-v14 .home-slide-track,
+  .main-home-polished .home-v14 .home-slide{
+    min-height:320px!important;
+  }
+}
+@media (max-width:620px){
+  .main-home-polished .home-v14 .home-slide{
+    background-size:contain!important;
+    background-position:center center!important;
+    background-repeat:no-repeat!important;
+    background-color:#031426!important;
+  }
+}

@@ -3928,3 +3928,25 @@ html,body{overflow-x:hidden}
   cursor:default!important;
 }
 
+
+/* =========================================================
+   KIZASHI 14.7 — Hero window almost edge-to-edge
+   Desktop: 4px left / 4px right inside the main content area.
+   Keep the four embedded hero images unchanged.
+   ========================================================= */
+@media (min-width: 621px){
+  .main-home-polished .home-v14{
+    width:calc(100% - 8px)!important;
+    max-width:none!important;
+    margin-left:4px!important;
+    margin-right:4px!important;
+  }
+
+  .main-home-polished .home-v14 .home-slide-hero{
+    width:100%!important;
+    max-width:none!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+}
+

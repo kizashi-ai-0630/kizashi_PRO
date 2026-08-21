@@ -4149,4 +4149,10 @@ html,body{overflow-x:hidden}
     border-radius:7px!important;
   }
 }
+/* KIZASHI 15.2 — hero CTA desktop position only: +25px down */
+@media (min-width:621px){
+  .main-home-polished .home-v14 .home-slide-copy{
+    top:calc(50% + 25px)!important;
+  }
+}
 

@@ -4149,10 +4149,10 @@ html,body{overflow-x:hidden}
     border-radius:7px!important;
   }
 }
-/* KIZASHI 15.2 — hero CTA desktop position only: +25px down */
+/* KIZASHI 15.3 — hero CTA desktop position only: +125px down from original */
 @media (min-width:621px){
   .main-home-polished .home-v14 .home-slide-copy{
-    top:calc(50% + 25px)!important;
+    top:calc(50% + 125px)!important;
   }
 }
 
